@@ -1,0 +1,57 @@
+	INCLUDE	"defs.i"
+
+	GLOBAL	sid_reset
+	GLOBAL	sid_welcome_sound
+
+	SECTION	TEXT
+sid_reset:
+	LDX	#$00
+.1	STZ	SID,x
+	INX
+	CPX	#$80
+	BNE	.1
+	LDA	#$ff
+	LDX	#$00
+.2	STA	SIDM,x
+	INX
+	CPX	#$08
+	BNE	.2
+	LDA	#$0f
+	STA	SID0V
+	STA	SID1V
+	RTS
+
+sid_welcome_sound:
+	LDA	#$c4
+	STA	SID0FL
+	LDA	#$09
+	STA	SID0FH
+	LDA	#%00001001
+	STA	SID0AD
+	LDA	#$0f
+	STA	SID0PL
+	STA	SID0PH
+	LDA	#$ff
+	STA	SIDM0L
+	LDA	#$10
+	STA	SIDM0R
+	LDA	#%01000001
+	STA	SID0VC
+
+	LDA	#$a2
+	STA	SID1FL
+	LDA	#$0e
+	STA	SID1FH
+	LDA	#%00001001
+	STA	SID1AD
+	LDA	#$0f
+	STA	SID1PL
+	STA	SID1PH
+	LDA	#$10
+	STA	SIDM1L
+	LDA	#$ff
+	STA	SIDM1R
+	LDA	#%01000001
+	STA	SID1VC
+
+	RTS
