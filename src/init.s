@@ -1,13 +1,18 @@
-	GLOBAL	cold_start
+	global	cold_start
 
-	SECTION	BSS
-var1	DC	1
+	section	BSS
+var1	dc	1
 
-	SECTION	TEXT
+	section	TEXT
 cold_start:
-	JSR	sid_reset
-	JSR	sid_welcome_sound
-.1	INC	$d021
-	JSR	functie
-	STA	var1
-	JMP	.1
+	; Because of reset exception, sp goes to $fd, let's 'restore'
+	; this to $ff so full stack is available.
+	ldx	#$ff
+	txs
+
+	jsr	sid_reset
+	jsr	sid_welcome_sound
+.1	inc	$d021
+	jsr	functie
+	sta	var1
+	jmp	.1
