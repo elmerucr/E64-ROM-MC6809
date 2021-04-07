@@ -5,4 +5,4 @@ nmi_vector:
 reset_vector:
 	DW	cold_start
 brk_vector:
-	DW	$0801
+	DW	irq_brk_interrupt

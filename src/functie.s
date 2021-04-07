@@ -1,11 +1,13 @@
-	GLOBAL functie
+	include	"defs.i"
+
+	GLOBAL	functie
 
 	SECTION	TEXT
 functie:
-	BIT	$ff
-	LDA	#$01
-	BNE	functie
-	RTS
+	inc	BLIT_HBC_LB
+	bne	.1
+	inc	BLIT_HBC_HB
+.1	RTS
 
 	SECTION	RODATA
 
