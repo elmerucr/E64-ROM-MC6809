@@ -28,6 +28,9 @@ cold_start:
 	jsr	sid_reset
 	jsr	sid_welcome_sound
 
+	; turn on interrupts
+	cli
+
 .1	inc	$d021
 	jsr	functie
 	sta	var1

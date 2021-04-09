@@ -4,9 +4,9 @@
 
 	SECTION	TEXT
 functie:
-	inc	BLIT_HBC_LB
+	;inc	BLIT_HBC_LB
 	bne	.1
-	inc	BLIT_HBC_HB
+	;inc	BLIT_HBC_HB
 .1	RTS
 
 	SECTION	RODATA
