@@ -1,8 +1,8 @@
 	include	"defs.i"
 
-	GLOBAL	functie
+	global	functie
 
-	SECTION	TEXT
+	section	TEXT
 functie:
 	;inc	BLIT_HBC_LB
 	bne	.1

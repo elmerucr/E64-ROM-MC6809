@@ -24,6 +24,14 @@ cold_start:
 	lda	#C64_BLUE_HB
 	sta	BLIT_CLC_HB
 
+	; set up a 60hz timer (3600bpm = $0e10)
+	lda	#$05
+	sta	TIMER_BPM_LB
+	lda	#$07
+	sta	TIMER_BPM_HB
+	lda	#%00000001		; load bit 0
+	tsb	TIMER_CR		; turn on timer 0
+
 	; sids
 	jsr	sid_reset
 	jsr	sid_welcome_sound
