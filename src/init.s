@@ -25,9 +25,9 @@ cold_start:
 	sta	BLIT_CLC_HB
 
 	; set up a 60hz timer (3600bpm = $0e10)
-	lda	#$05
+	lda	#$10
 	sta	TIMER_BPM_LB
-	lda	#$07
+	lda	#$0e
 	sta	TIMER_BPM_HB
 	lda	#%00000001		; load bit 0
 	tsb	TIMER_CR		; turn on timer 0
