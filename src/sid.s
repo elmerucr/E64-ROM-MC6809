@@ -1,4 +1,4 @@
-	INCLUDE	"defs.i"
+	INCLUDE	"definitions.i"
 
 	GLOBAL	sid_reset
 	GLOBAL	sid_welcome_sound
