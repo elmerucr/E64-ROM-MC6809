@@ -90,7 +90,8 @@ cold_start:
 	; turn on interrupts
 	cli
 
-.1	inc	$d021
-	lda	$d021
+	; do some loop
+.1	inc	$c000
+	lda	$c000
 	sta	var1
-	jmp	.1
+	bra	.1

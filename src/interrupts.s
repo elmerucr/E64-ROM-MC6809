@@ -23,29 +23,59 @@ irq_brk_interrupt:
 	tsx
 	lda	$0104,x		; load stacked sr
 	and	#%00010000	; is the break flag set?
-	beq	.1
+	beq	.1		; no, branch to vicv check
 	jmp	(BRK_VECTOR_INDIRECT)
 
 .1	lda	VICV_SR
-	beq	.2		; if not vicv, jump to test timer
-	lda	#$01		; acknowledge vicv interrupt
-	sta	$d000
+	beq	.2		; if not vicv, branch to timer check	
+	sta	VICV_SR		; acknowledge vicv interrupt
 	jmp	(VICV_VECTOR_INDIRECT)
 
-.2	lda	#$01		; acknowledge timer interrupt
-	sta	TIMER_SR
+.2	lda	TIMER_SR
+	beq	interrupt_end
+	cmp	#%00000001
+	bne	.3
+	sta	TIMER_SR	; acknowledge
 	jmp	(TIMER0_VECTOR_INDIRECT)
+.3	cmp	#%00000010
+	bne	.4
+	sta	TIMER_SR
+	jmp	(TIMER1_VECTOR_INDIRECT)
+.4	cmp	#%00000100
+	bne	.5
+	sta	TIMER_SR
+	jmp	(TIMER2_VECTOR_INDIRECT)
+.5	cmp	#%00001000
+	bne	.6
+	sta	TIMER_SR
+	jmp	(TIMER3_VECTOR_INDIRECT)
+.6	cmp	#%00010000
+	bne	.7
+	sta	TIMER_SR
+	jmp	(TIMER4_VECTOR_INDIRECT)
+.7	cmp	#%00100000
+	bne	.8
+	sta	TIMER_SR
+	jmp	(TIMER5_VECTOR_INDIRECT)
+.8	cmp	#%01000000
+	bne	.9
+	sta	TIMER_SR
+	jmp	(TIMER6_VECTOR_INDIRECT)
+.9	sta	TIMER_SR			; it must be timer 7
+	jmp	(TIMER7_VECTOR_INDIRECT)
 
 vicv_interrupt:
 	lda	#BLIT_CMD_SWAP_BUFFERS
 	sta	BLIT_CR
 	lda	#BLIT_CMD_CLEAR_FRAMEBUFFER
 	sta	BLIT_CR
-	jmp	interrupt_end
+	lda	#BLIT_CMD_DRAW_BORDER
+	sta	BLIT_CR
+	bra	interrupt_end
 
 brk_interrupt:
 	; do something...
-	jmp	interrupt_end
+	bra	interrupt_end
 
 nmi_interrupt:
 	pha
