@@ -14,74 +14,77 @@ cold_start:
 
 	; place vectors in ram
 	lda	#<vicv_interrupt
+	ldx	#>vicv_interrupt
 	sta	VICV_VECTOR_INDIRECT
-	lda	#>vicv_interrupt
-	sta	VICV_VECTOR_INDIRECT+1
+	stx	VICV_VECTOR_INDIRECT+1
 
 	lda	#<brk_interrupt
+	ldx	#>brk_interrupt
 	sta	BRK_VECTOR_INDIRECT
-	lda	#>brk_interrupt
-	sta	BRK_VECTOR_INDIRECT+1
+	stx	BRK_VECTOR_INDIRECT+1
 
 	lda	#<timer0_interrupt
+	ldx	#>timer0_interrupt
 	sta	TIMER0_VECTOR_INDIRECT
-	lda	#>timer0_interrupt
-	sta	TIMER0_VECTOR_INDIRECT+1
+	stx	TIMER0_VECTOR_INDIRECT+1
 
 	lda	#<timer1_interrupt
+	ldx	#>timer1_interrupt
 	sta	TIMER1_VECTOR_INDIRECT
-	lda	#>timer1_interrupt
-	sta	TIMER1_VECTOR_INDIRECT+1
+	stx	TIMER1_VECTOR_INDIRECT+1
 
 	lda	#<timer2_interrupt
+	ldx	#>timer2_interrupt
 	sta	TIMER2_VECTOR_INDIRECT
-	lda	#>timer2_interrupt
-	sta	TIMER2_VECTOR_INDIRECT+1
+	stx	TIMER2_VECTOR_INDIRECT+1
 
 	lda	#<timer3_interrupt
+	ldx	#>timer3_interrupt
 	sta	TIMER3_VECTOR_INDIRECT
-	lda	#>timer3_interrupt
-	sta	TIMER3_VECTOR_INDIRECT+1
+	stx	TIMER3_VECTOR_INDIRECT+1
 
 	lda	#<timer4_interrupt
+	ldx	#>timer4_interrupt
 	sta	TIMER4_VECTOR_INDIRECT
-	lda	#>timer4_interrupt
-	sta	TIMER4_VECTOR_INDIRECT+1
+	stx	TIMER4_VECTOR_INDIRECT+1
 
 	lda	#<timer5_interrupt
+	ldx	#>timer5_interrupt
 	sta	TIMER5_VECTOR_INDIRECT
-	lda	#>timer5_interrupt
-	sta	TIMER5_VECTOR_INDIRECT+1
+	stx	TIMER5_VECTOR_INDIRECT+1
 
 	lda	#<timer6_interrupt
+	ldx	#>timer6_interrupt
 	sta	TIMER6_VECTOR_INDIRECT
-	lda	#>timer6_interrupt
-	sta	TIMER6_VECTOR_INDIRECT+1
+	stx	TIMER6_VECTOR_INDIRECT+1
 
 	lda	#<timer7_interrupt
+	ldx	#>timer7_interrupt
 	sta	TIMER7_VECTOR_INDIRECT
-	lda	#>timer7_interrupt
-	sta	TIMER7_VECTOR_INDIRECT+1
+	stx	TIMER7_VECTOR_INDIRECT+1
 
-	; Set up border size and color
+	; Set up border size and colors
 	lda	#$10
 	sta	BLIT_HBS
-	lda	c64_black
-	sta	BLIT_HBC_LB
-	lda	c64_black+1
-	sta	BLIT_HBC_HB
-	lda	c64_blue
-	sta	BLIT_CLC_LB
-	lda	c64_blue+1
-	sta	BLIT_CLC_HB
 
-	; set up a 60hz timer (3600bpm = $0e10)
+	lda	c64_black
+	ldx	c64_black+1
+	sta	BLIT_HBC_LB
+	stx	BLIT_HBC_HB
+
+	lda	c64_blue
+	ldx	c64_blue+1
+	sta	BLIT_CLC_LB
+	stx	BLIT_CLC_HB
+
+	; set up a 60Hz timer (3600bpm = $0e10)
 	lda	#$10
+	ldx	#$0e
 	sta	TIMER_BPM_LB
-	lda	#$0e
-	sta	TIMER_BPM_HB
-	lda	#%00000001		; load bit 0
-	tsb	TIMER_CR		; turn on timer 0
+	stx	TIMER_BPM_HB
+
+	lda	#%00000001	; turn on timer 0
+	tsb	TIMER_CR
 
 	; sids
 	jsr	sid_reset
@@ -90,7 +93,7 @@ cold_start:
 	; turn on interrupts
 	cli
 
-	; do some loop
+	; do some loop (replace for more serious work)
 .1	inc	$c000
 	lda	$c000
 	sta	var1
