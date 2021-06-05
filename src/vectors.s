@@ -1,8 +1,8 @@
-	SECTION	VECTORS
+	section	VECTORS
 
 nmi_vector:
-	DW	nmi_interrupt
+	dw	nmi_interrupt
 reset_vector:
-	DW	cold_start
+	dw	cold_start
 brk_vector:
-	DW	irq_brk_interrupt
+	dw	irq_brk_interrupt
