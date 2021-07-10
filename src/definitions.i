@@ -18,7 +18,12 @@ VICV_SR		equ	VICV
 ; blit
 BLIT		equ	$d100
 BLIT_CR		equ	BLIT
+BLIT_NO		equ	BLIT+$1
 BLIT_HBS	equ	BLIT+$2
+BLIT_XPOS_L	equ	BLIT+$4
+BLIT_XPOS_H	equ	BLIT+$5
+BLIT_YPOS_L	equ	BLIT+$6
+BLIT_YPOS_H	equ	BLIT+$7
 BLIT_CLC_LB	equ	BLIT+$8
 BLIT_CLC_HB	equ	BLIT+$9
 BLIT_HBC_LB	equ	BLIT+$a
@@ -27,6 +32,11 @@ BLIT_CMD_SWAP_BUFFERS		equ	%00000001
 BLIT_CMD_CLEAR_FRAMEBUFFER	equ	%00000010
 BLIT_CMD_DRAW_BORDER		equ	%00000100
 BLIT_CMD_DRAW_BLIT		equ	%00001000
+
+; blit descriptors
+BLIT_D_00	equ	$d800
+BLIT_D_01	equ	$d808
+BLIT_D_02	equ	$d810
 
 ; timer
 TIMER		equ	$d300
@@ -61,55 +71,3 @@ SIDM0L	EQU	SIDM
 SIDM0R	EQU	SIDM+$01
 SIDM1L	EQU	SIDM+$02
 SIDM1R	EQU	SIDM+$03
-
-; C64 colors (VirtualC64)
-; C64_BLACK       	EQU	$f000
-; C64_WHITE       	EQU	$ffff
-; C64_RED         	EQU	$f733
-; C64_CYAN        	EQU	$f8cc
-; C64_PURPLE      	EQU	$f849
-; C64_GREEN       	EQU	$f6a5
-; C64_BLUE        	EQU	$f339
-; C64_YELLOW      	EQU	$fee8
-; C64_ORANGE      	EQU	$f853
-; C64_BROWN       	EQU	$f531
-; C64_LIGHTRED    	EQU	$fb77
-; C64_DARKGREY    	EQU	$f444
-; C64_GREY        	EQU	$f777
-; C64_LIGHTGREEN  	EQU	$fbfa
-; C64_LIGHTBLUE   	EQU	$f67d
-; C64_LIGHTGREY   	EQU	$faaa
-
-; C64_BLACK_LB       	EQU	$00
-; C64_WHITE_LB       	EQU	$ff
-; C64_RED_LB         	EQU	$33
-; C64_CYAN_LB        	EQU	$cc
-; C64_PURPLE_LB      	EQU	$49
-; C64_GREEN_LB       	EQU	$a5
-; C64_BLUE_LB        	EQU	$39
-; C64_YELLOW_LB      	EQU	$e8
-; C64_ORANGE_LB      	EQU	$53
-; C64_BROWN_LB       	EQU	$31
-; C64_LIGHTRED_LB    	EQU	$77
-; C64_DARKGREY_LB    	EQU	$44
-; C64_GREY_LB        	EQU	$77
-; C64_LIGHTGREEN_LB  	EQU	$fa
-; C64_LIGHTBLUE_LB   	EQU	$7d
-; C64_LIGHTGREY_LB   	EQU	$aa
-
-; C64_BLACK_HB       	EQU	$f0
-; C64_WHITE_HB       	EQU	$ff
-; C64_RED_HB         	EQU	$f7
-; C64_CYAN_HB        	EQU	$f8
-; C64_PURPLE_HB      	EQU	$f8
-; C64_GREEN_HB       	EQU	$f6
-; C64_BLUE_HB        	EQU	$f3
-; C64_YELLOW_HB      	EQU	$fe
-; C64_ORANGE_HB      	EQU	$f8
-; C64_BROWN_HB       	EQU	$f5
-; C64_LIGHTRED_HB    	EQU	$fb
-; C64_DARKGREY_HB    	EQU	$f4
-; C64_GREY_HB        	EQU	$f7
-; C64_LIGHTGREEN_HB  	EQU	$fb
-; C64_LIGHTBLUE_HB   	EQU	$f6
-; C64_LIGHTGREY_HB   	EQU	$fa

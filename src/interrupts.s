@@ -69,6 +69,17 @@ vicv_interrupt:
 	sta	BLIT_CR
 	lda	#BLIT_CMD_CLEAR_FRAMEBUFFER
 	sta	BLIT_CR
+
+	lda	#$00
+	sta	BLIT_NO
+	sta	BLIT_XPOS_H
+	sta	BLIT_YPOS_H
+	sta	BLIT_XPOS_L
+	lda	#$10
+	sta	BLIT_YPOS_L
+	lda	#BLIT_CMD_DRAW_BLIT
+	sta	BLIT_CR
+
 	lda	#BLIT_CMD_DRAW_BORDER
 	sta	BLIT_CR
 	bra	interrupt_end
@@ -89,7 +100,8 @@ interrupt_end:
 	rti
 
 timer0_interrupt:
-	inc	BLIT_HBS	; do something visible with border
+	;inc	BLIT_HBS	; do something visible with border
+	inc	$d200
 	jmp	interrupt_end
 
 timer1_interrupt:

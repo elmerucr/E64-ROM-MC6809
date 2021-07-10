@@ -77,12 +77,25 @@ cold_start:
 	sta	BLIT_CLC_LB
 	stx	BLIT_CLC_HB
 
+	; Set up blitdescriptor 0 (main text screen)
+	lda	#%10000100
+	sta	BLIT_D_00+$00
+	lda	#%00000000
+	sta	BLIT_D_00+$01
+	lda	#$56		; size 2x2 tiles
+	sta	BLIT_D_00+$02
+
+	; Set up blit memory inspection
+	lda #$80
+	sta $d10e
+	lda #$00
+	sta $d10f
+
 	; set up a 60Hz timer (3600bpm = $0e10)
 	lda	#$10
 	ldx	#$0e
 	sta	TIMER_BPM_LB
 	stx	TIMER_BPM_HB
-
 	lda	#%00000001	; turn on timer 0
 	tsb	TIMER_CR
 
@@ -90,7 +103,7 @@ cold_start:
 	jsr	sid_reset
 	jsr	sid_welcome_sound
 
-	; turn on interrupts
+	; allow interrupts
 	cli
 
 	; do some loop (replace for more serious work)
