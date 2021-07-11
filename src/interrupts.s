@@ -101,7 +101,7 @@ interrupt_end:
 
 timer0_interrupt:
 	;inc	BLIT_HBS	; do something visible with border
-	inc	$d200
+	inc	$d200	; temp hack to see something
 	jmp	interrupt_end
 
 timer1_interrupt:
