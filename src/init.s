@@ -78,11 +78,11 @@ cold_start:
 	stx	BLIT_CLC_HB
 
 	; Set up blitdescriptor 0 (main text screen)
-	lda	#%10000010
+	lda	#%10001010
 	sta	BLIT_D_00+$00
 	lda	#%00000000
 	sta	BLIT_D_00+$01
-	lda	#$56		; size 2x2 tiles
+	lda	#$56		; size 64x32
 	sta	BLIT_D_00+$02
 	lda	c64_lightblue
 	sta	BLIT_D_00+$04
@@ -114,7 +114,12 @@ cold_start:
 	cli
 
 	; do some loop (replace for more serious work)
-.1	inc	$c000
-	lda	$c000
-	sta	var1
+.1	;inc	$c000
+	;lda	$c000
+	;sta	var1
+	inc	BLIT_DATA
+	lda	#BLIT_CMD_PUTCHAR
+	sta	BLIT_CR
+
+
 	bra	.1
