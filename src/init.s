@@ -113,15 +113,29 @@ cold_start:
 	; allow interrupts
 	cli
 
-	; do some loop (replace for more serious work)
-.1	inc	BLIT_DATA		; this location contains char to print
-	lda	#BLIT_CMD_PUT_SYMBOL_AT_CURSOR
+clear_screen:
+	; clear screen
+	lda	#BLIT_CMD_RESET_CURSOR		; reset curs pos
+	sta	BLIT_CR
+	lda	#'@'
+	sta	BLIT_DATA
+.1	lda	#BLIT_CMD_PUT_SYMBOL_AT_CURSOR
 	sta	BLIT_CR
 	lda	#BLIT_CMD_INCREASE_CURSOR_POS
 	sta	BLIT_CR
 	lda	BLIT_CR
 	beq	.1
+
+
+	; do some loop (replace for more serious work)
+.2	inc	BLIT_DATA		; this location contains char to print
+	lda	#BLIT_CMD_PUT_SYMBOL_AT_CURSOR
+	sta	BLIT_CR
+	;lda	#BLIT_CMD_INCREASE_CURSOR_POS
+	;sta	BLIT_CR
+	lda	BLIT_CR
+	beq	.2
 	inc	BLIT_DATA
 
 
-	bra	.1
+	bra	.2
