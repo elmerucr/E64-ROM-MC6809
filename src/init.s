@@ -80,7 +80,7 @@ cold_start:
 	; Set up blitdescriptor 0 (main text screen)
 	lda	#%10001010
 	sta	BLIT_D_00+$00
-	lda	#%00000000
+	lda	#%00000000	; not expanded, not mirrored
 	sta	BLIT_D_00+$01
 	lda	#$56		; size 64x32
 	sta	BLIT_D_00+$02
@@ -110,32 +110,33 @@ cold_start:
 	jsr	sid_reset
 	jsr	sid_welcome_sound
 
+	; cia
+	lda	#CIA_CMD_CLEAR_EVENT_LIST
+	sta	CIA_CR
+	lda	#CIA_GENERATE_EVENTS
+	sta	CIA_CR
+
 	; allow interrupts
 	cli
 
 clear_screen:
-	; clear screen
 	lda	#BLIT_CMD_RESET_CURSOR		; reset curs pos
 	sta	BLIT_CR
-	lda	#'@'
+	lda	#' '
 	sta	BLIT_DATA
 .1	lda	#BLIT_CMD_PUT_SYMBOL_AT_CURSOR
 	sta	BLIT_CR
 	lda	#BLIT_CMD_INCREASE_CURSOR_POS
 	sta	BLIT_CR
-	lda	BLIT_CR
+	lda	BLIT_CR				; check for pos 0
 	beq	.1
 
-
 	; do some loop (replace for more serious work)
-.2	inc	BLIT_DATA		; this location contains char to print
+.2	lda	CIA_AC
+	beq	.2
+	sta	BLIT_DATA
 	lda	#BLIT_CMD_PUT_SYMBOL_AT_CURSOR
 	sta	BLIT_CR
-	;lda	#BLIT_CMD_INCREASE_CURSOR_POS
-	;sta	BLIT_CR
-	lda	BLIT_CR
-	beq	.2
-	inc	BLIT_DATA
-
-
+	lda	#BLIT_CMD_INCREASE_CURSOR_POS
+	sta	BLIT_CR
 	bra	.2
