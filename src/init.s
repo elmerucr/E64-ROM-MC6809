@@ -6,8 +6,10 @@
 var1	dc	1
 
 	section	TEXT
+	; ROM version
+	db	'E64-ROM 0.1 20210819',0
 cold_start:
-	; Because of reset exception, sp goes to $fd, let's 'restore'
+	; Because of reset procedure, sp goes to $fd, let's 'restore'
 	; this to $ff so full stack will be available.
 	ldx	#$ff
 	txs
@@ -115,6 +117,10 @@ cold_start:
 	sta	CIA_CR
 	lda	#CIA_GENERATE_EVENTS
 	sta	CIA_CR
+	lda	#50		; 50 * 10ms = 0.5 s delay
+	sta	CIA_KRD
+	lda	#5
+	sta	CIA_KRS		; 5 * 10ms = 50ms rep speed
 
 	; allow interrupts
 	cli
