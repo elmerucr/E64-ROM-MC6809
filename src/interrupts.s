@@ -100,8 +100,8 @@ interrupt_end:
 	rti
 
 timer0_interrupt:
-	;inc	BLIT_HBS	; do something visible with border
-	inc	$d2ff	; temp hack to see something
+	lda	#BLIT_CMD_PROCESS_CURSOR_STATE
+	sta	BLIT_CR
 	jmp	interrupt_end
 
 timer1_interrupt:

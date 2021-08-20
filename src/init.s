@@ -7,7 +7,7 @@ var1	dc	1
 
 	section	TEXT
 	; ROM version
-	db	'E64-ROM 0.1 20210819',0
+	db	'E64-ROM 0.1 20210820',0
 cold_start:
 	; Because of reset procedure, sp goes to $fd, let's 'restore'
 	; this to $ff so full stack will be available.
@@ -137,12 +137,22 @@ clear_screen:
 	lda	BLIT_CR				; check for pos 0
 	beq	.1
 
+	lda	#20
+	sta	BLIT_BLINK_INTERVAL
+
+	lda	#BLIT_CMD_ACTIVATE_CURSOR
+	sta	BLIT_CR
+
 	; do some loop (replace for more serious work)
 .2	lda	CIA_AC
 	beq	.2
 	sta	BLIT_DATA
+	lda	#BLIT_CMD_DEACTIVATE_CURSOR
+	sta	BLIT_CR
 	lda	#BLIT_CMD_PUT_SYMBOL_AT_CURSOR
 	sta	BLIT_CR
 	lda	#BLIT_CMD_INCREASE_CURSOR_POS
+	sta	BLIT_CR
+	lda	#BLIT_CMD_ACTIVATE_CURSOR
 	sta	BLIT_CR
 	bra	.2
