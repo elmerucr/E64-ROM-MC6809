@@ -75,7 +75,7 @@ TIMER_BPM_HB	equ	TIMER+$03
 ; sid
 SID	equ	$d400
 
-SID0	equ	SID
+SID0	equ	SID		; sid 0 base
 SID0FL	equ	SID0+$00
 SID0FH	equ	SID0+$01
 SID0PL	equ	SID0+$02
@@ -84,7 +84,7 @@ SID0VC	equ	SID0+$04
 SID0AD	equ	SID0+$05
 SID0V	equ	SID0+$18
 
-SID1	equ	SID+$20
+SID1	equ	SID+$20		; sid 1 base
 SID1FL	equ	SID1+$00
 SID1FH	equ	SID1+$01
 SID1PL	equ	SID1+$02
@@ -93,20 +93,25 @@ SID1VC	equ	SID1+$04
 SID1AD	equ	SID1+$05
 SID1V	equ	SID1+$18
 
-SIDM	equ	SID+$80
-SIDM0L	equ	SIDM
+SIDM	equ	SID+$80		; mixer base
+SIDM0L	equ	SIDM+$00
 SIDM0R	equ	SIDM+$01
 SIDM1L	equ	SIDM+$02
 SIDM1R	equ	SIDM+$03
 
 ; cia
-CIA	equ	$d500
-CIA_SR	equ	CIA
-CIA_CR	equ	CIA+$01
-CIA_KRD	equ	CIA+$02
-CIA_KRS	equ	CIA+$03
-CIA_AC	equ	CIA+$04
-CIA_KSA	equ	CIA+$80
+CIA	equ	$d500		; CIA base
+CIA_SR	equ	CIA		; status register
+CIA_CR	equ	CIA+$01		; control register
+CIA_KRD	equ	CIA+$02		; keyboard repeat delay in 10ms
+CIA_KRS	equ	CIA+$03		; keyboard repeat speed in 10ms
+CIA_AC	equ	CIA+$04		; ascii code
+CIA_KSA	equ	CIA+$80		; start of key state array
 
 CIA_GENERATE_EVENTS		equ	%00000001
 CIA_CMD_CLEAR_EVENT_LIST	equ	%10000000
+
+; ascii
+ASCII_LF		equ	$0a
+ASCII_CURSOR_RIGHT	equ	$1d
+ASCII_CURSOR_LEFT	equ	$9d
