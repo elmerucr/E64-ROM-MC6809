@@ -8,7 +8,7 @@ OBJECTS = obj/init.o
 
 # Order of the rest of the objects doesn't matter.
 OBJECTS +=	obj/tables.o obj/vectors.o obj/interrupts.o obj/sid.o \
-		obj/sweeter16.o obj/screeneditor.o obj/dsp.o
+		obj/screeneditor.o obj/dsp.o
 
 # Sometimes there seems be strange behaviour related to the -align option. Now
 # it seems ok. Another way would be to use the -devpac option?
