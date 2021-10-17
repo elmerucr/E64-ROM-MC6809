@@ -1,3 +1,57 @@
+; zero page defenitions
+; sweeter16
+R0	equ	$00
+R0L	equ	R0
+R0H	equ	R0L+1
+R1	equ	$02
+R1L	equ	R0
+R1H	equ	R0L+1
+R2	equ	$04
+R2L	equ	R0
+R2H	equ	R0L+1
+R3	equ	$06
+R3L	equ	R0
+R3H	equ	R0L+1
+R4	equ	$08
+R4L	equ	R0
+R4H	equ	R0L+1
+R5	equ	$0a
+R5L	equ	R0
+R5H	equ	R0L+1
+R6	equ	$0c
+R6L	equ	R0
+R6H	equ	R0L+1
+R7	equ	$0e
+R7L	equ	R0
+R7H	equ	R0L+1
+R8	equ	$10
+R8L	equ	R0
+R8H	equ	R0L+1
+R9	equ	$12
+R9L	equ	R0
+R9H	equ	R0L+1
+R10	equ	$14
+R10L	equ	R0
+R10H	equ	R0L+1
+R11	equ	$16
+R11L	equ	R0
+R11H	equ	R0L+1
+R12	equ	$18
+R12L	equ	R0
+R12H	equ	R0L+1
+R13	equ	$1a
+R13L	equ	R0
+R13H	equ	R0L+1
+R14	equ	$1c
+R14L	equ	R0
+R14H	equ	R0L+1
+R15	equ	$1e
+R15L	equ	R0
+R15H	equ	R0L+1
+
+DSP	equ	$20	; data stackpointer location in zero page
+DSP_IV	equ	$cfff	; initial value
+
 ; indirect interrupt vectors in ram
 BRK_VECTOR_INDIRECT	equ	$0200
 NMI_VECTOR_INDIRECT	equ	$0202
@@ -76,22 +130,24 @@ TIMER_BPM_HB	equ	TIMER+$03
 SID	equ	$d400
 
 SID0	equ	SID		; sid 0 base
-SID0FL	equ	SID0+$00
-SID0FH	equ	SID0+$01
-SID0PL	equ	SID0+$02
-SID0PH	equ	SID0+$03
+SID0FH	equ	SID0+$00
+SID0FL	equ	SID0+$01
+SID0PH	equ	SID0+$02
+SID0PL	equ	SID0+$03
 SID0VC	equ	SID0+$04
 SID0AD	equ	SID0+$05
-SID0V	equ	SID0+$18
+SID0SR	equ	SID0+$06
+SID0V	equ	SID0+$1b
 
 SID1	equ	SID+$20		; sid 1 base
-SID1FL	equ	SID1+$00
-SID1FH	equ	SID1+$01
-SID1PL	equ	SID1+$02
-SID1PH	equ	SID1+$03
+SID1FH	equ	SID1+$00
+SID1FL	equ	SID1+$01
+SID1PH	equ	SID1+$02
+SID1PL	equ	SID1+$03
 SID1VC	equ	SID1+$04
 SID1AD	equ	SID1+$05
-SID1V	equ	SID1+$18
+SID1SR	equ	SID1+$06
+SID1V	equ	SID1+$1b
 
 SIDM	equ	SID+$80		; mixer base
 SIDM0L	equ	SIDM+$00

@@ -9,10 +9,16 @@ var1	dc	1
 rom_version:
 	db	'rom v0.1 20210828',0
 cold_start:
-	; Because of reset procedure, sp goes to $fd, let's 'restore'
+	; Because of reset procedure, stackpointer goes to $fd, let's 'restore'
 	; this to $ff so full stack will be available.
 	ldx	#$ff
 	txs
+
+	; set data stackpointer to initial value
+	lda	#<DSP_IV
+	ldx	#>DSP_IV
+	sta	DSP
+	stx	DSP+1
 
 	; place vectors in ram
 	lda	#<vicv_interrupt
@@ -128,4 +134,8 @@ cold_start:
 	; allow interrupts
 	cli
 
+; 	lda	#$00
+; .1	jsr	pusha
+; 	inc	a
+; 	bra	.1
 	jmp	se_start
