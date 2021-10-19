@@ -13,9 +13,6 @@ vector_reset:
 	lds	#$1000		; this enables nmi as well
 	ldu	#$0800
 
-	; enable firq/irq
-;	andcc	#%10101111
-
 	; place vectors in ram
 	ldx	#vicv_interrupt
 	stx	VICV_VECTOR_INDIRECT
@@ -25,15 +22,11 @@ vector_reset:
 ;	sta	BRK_VECTOR_INDIRECT
 ;	stx	BRK_VECTOR_INDIRECT+1
 ;
-;	lda	#<timer0_interrupt
-;	ldx	#>timer0_interrupt
-;	sta	TIMER0_VECTOR_INDIRECT
-;	stx	TIMER0_VECTOR_INDIRECT+1
-;
-;	lda	#<timer1_interrupt
-;	ldx	#>timer1_interrupt
-;	sta	TIMER1_VECTOR_INDIRECT
-;	stx	TIMER1_VECTOR_INDIRECT+1
+	ldx	#timer0_interrupt
+	stx	TIMER0_VECTOR_INDIRECT
+
+	ldx	#timer1_interrupt
+	stx	TIMER1_VECTOR_INDIRECT
 ;
 ;	lda	#<timer2_interrupt
 ;	ldx	#>timer2_interrupt
@@ -65,67 +58,58 @@ vector_reset:
 ;	sta	TIMER7_VECTOR_INDIRECT
 ;	stx	TIMER7_VECTOR_INDIRECT+1
 ;
-;	; Set up border size and colors
-;	lda	#$10
-;	sta	BLIT_HBS
-;
-;	lda	c64_black
-;	ldx	c64_black+1
-;	sta	BLIT_HBC_LB
-;	stx	BLIT_HBC_HB
-;
-;	lda	c64_blue
-;	ldx	c64_blue+1
-;	sta	BLIT_CLC_LB
-;	stx	BLIT_CLC_HB
-;
-;	lda	#20
-;	sta	BLIT_BLINK_INTERVAL
-;
-;	; Set up blitdescriptor 0 (main text screen)
-;	lda	#%10001010
-;	sta	BLIT_D_00+$00
-;	lda	#%00000000	; not expanded, not mirrored
-;	sta	BLIT_D_00+$01
-;	lda	#$56		; size 64x32
-;	sta	BLIT_D_00+$02
-;	lda	c64_lightblue
-;	sta	BLIT_D_00+$04
-;	lda	c64_lightblue+1
-;	sta	BLIT_D_00+$05
-;	lda	#$00
-;	sta	BLIT_D_00+$06
-;	sta	BLIT_D_00+$07
-;
-;	; Set up blit memory inspection
-;	lda #$80
-;	sta BLIT_PAGE_LB
-;	lda #$00
-;	sta BLIT_PAGE_HB
-;
-;	; set up a 60Hz timer (3600bpm = $0e10)
-;	lda	#$10
-;	ldx	#$0e
-;	sta	TIMER_BPM_LB
-;	stx	TIMER_BPM_HB
-;	lda	#%00000001	; turn on timer 0
-;	tsb	TIMER_CR
-;
+	; Set up border size and colors
+	lda	#$10
+	sta	BLIT_HBS
+
+	ldd	c64_black
+	std	BLIT_HBC
+
+	ldd	c64_blue
+	std	BLIT_CLC
+
+	lda	#20
+	sta	BLIT_BLINK_INTERVAL
+
+	; Set up blitdescriptor 0 (main text screen)
+	lda	#%10001010
+	ldx	#BLIT_D_00
+	sta	$00,x
+	lda	#%00000000	; not expanded, not mirrored
+	sta	$01,x
+	lda	#$56		; size 64x32
+	sta	$02,x
+	ldd	c64_lightblue
+	std	$04,x
+	lda	#$00
+	clr	$06,x
+	clr	$07,x
+
+	; Set up blit memory inspection
+	ldd	#$0080
+	std	BLIT_PAGE
+
+	; set up a 60Hz timer (3600bpm = $0e10)
+	ldd	#$0e10
+	std	TIMER_BPM
+	lda	#%00000001	; turn on timer 0
+	sta	TIMER_CR
+
 	; sids
 	jsr	sid_reset
 	jsr	sid_welcome_sound
-;
-;	; cia
-;	lda	#CIA_CMD_CLEAR_EVENT_LIST
-;	sta	CIA_CR
-;	lda	#CIA_GENERATE_EVENTS
-;	sta	CIA_CR
-;	lda	#50		; 50 * 10ms = 0.5 s delay
-;	sta	CIA_KRD
-;	lda	#5
-;	sta	CIA_KRS		; 5 * 10ms = 50ms rep speed
-;
-;	; allow interrupts
-;	cli
-;
-;	jmp	se_start
+
+	; cia
+	lda	#CIA_CMD_CLEAR_EVENT_LIST
+	sta	CIA_CR
+	lda	#CIA_GENERATE_EVENTS
+	sta	CIA_CR
+	lda	#50		; 50 * 10ms = 0.5 s delay
+	sta	CIA_KRD
+	lda	#5
+	sta	CIA_KRS		; 5 * 10ms = 50ms rep speed
+
+	; enable firq/irq
+	andcc	#%10101111
+
+	jmp	se_start

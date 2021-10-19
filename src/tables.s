@@ -1,15 +1,15 @@
-	global	c64_black     
-	global	c64_white     
-	global	c64_red       
-	global	c64_cyan      
-	global	c64_purple    
-	global	c64_green     
-	global	c64_blue      
-	global	c64_yellow    
-	global	c64_orange    
-	global	c64_brown     
-	global	c64_lightred  
-	global	c64_darkgrey  
+	global	c64_black
+	global	c64_white
+	global	c64_red
+	global	c64_cyan
+	global	c64_purple
+	global	c64_green
+	global	c64_blue
+	global	c64_yellow
+	global	c64_orange
+	global	c64_brown
+	global	c64_lightred
+	global	c64_darkgrey
 	global	c64_grey
 	global	c64_lightgreen
 	global	c64_lightblue

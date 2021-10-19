@@ -33,9 +33,17 @@ vector_firq:
 	rti
 
 vector_irq:
-	ldd	#$dead
-	ldd	#$beef
-	rti
+.1	lda	VICV_SR
+	beq	.2
+	sta	VICV_SR
+	jmp	[VICV_VECTOR_INDIRECT]
+.2	lda	TIMER_SR
+	beq	interrupt_end
+	cmpa	#%00000001
+	bne	.3
+	sta	TIMER_SR
+	jmp	[TIMER0_VECTOR_INDIRECT]
+.3	bra	interrupt_end
 
 vector_swi:
 	rti
@@ -45,6 +53,8 @@ vector_nmi:
 	rti
 
 timer0_interrupt:
+	lda	#BLIT_CMD_PROCESS_CURSOR_STATE
+	sta	BLIT_CR
 	rti
 timer1_interrupt:
 	rti
@@ -112,23 +122,22 @@ timer7_interrupt:
 ;	jmp	(TIMER7_VECTOR_INDIRECT)
 ;
 vicv_interrupt:
-;	lda	#BLIT_CMD_SWAP_BUFFERS
-;	sta	BLIT_CR
-;	lda	#BLIT_CMD_CLEAR_FRAMEBUFFER
-;	sta	BLIT_CR
-;
-;	lda	#$00
-;	sta	BLIT_NO
-;	sta	BLIT_XPOS_H
-;	sta	BLIT_YPOS_H
-;	sta	BLIT_XPOS_L
-;	lda	#$10
-;	sta	BLIT_YPOS_L
-;	lda	#BLIT_CMD_DRAW_BLIT
-;	sta	BLIT_CR
-;
-;	lda	#BLIT_CMD_DRAW_BORDER
-;	sta	BLIT_CR
+	lda	#BLIT_CMD_SWAP_BUFFERS
+	sta	BLIT_CR
+	lda	#BLIT_CMD_CLEAR_FRAMEBUFFER
+	sta	BLIT_CR
+
+	clra
+	sta	BLIT_NO
+	ldd	#$0000
+	std	BLIT_XPOS
+	ldd	#$0010
+	std	BLIT_YPOS
+	lda	#BLIT_CMD_DRAW_BLIT
+	sta	BLIT_CR
+
+	lda	#BLIT_CMD_DRAW_BORDER
+	sta	BLIT_CR
 	bra	interrupt_end
 ;
 ;brk_interrupt:
@@ -144,10 +153,7 @@ interrupt_end:
 	rti
 
 ;timer0_interrupt:
-;	lda	#BLIT_CMD_PROCESS_CURSOR_STATE
-;	sta	BLIT_CR
-;	jmp	interrupt_end
-;
+
 ;timer1_interrupt:
 ;	jmp	interrupt_end
 ;
