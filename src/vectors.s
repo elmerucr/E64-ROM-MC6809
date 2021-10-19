@@ -1,8 +1,10 @@
 	section	VECTORS
 
-nmi_vector:
-	dw	nmi_interrupt
-reset_vector:
-	dw	cold_start
-brk_vector:
-	dw	irq_brk_interrupt
+	dw	vector_illop
+	dw	vector_swi3
+	dw	vector_swi2
+	dw	vector_firq
+	dw	vector_irq
+	dw	vector_swi
+	dw	vector_nmi
+	dw	vector_reset

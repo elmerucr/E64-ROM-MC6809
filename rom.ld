@@ -1,5 +1,5 @@
 _ROM_START	= 0xe000;
-_RAM_START	= 0x0220;
+_RAM_START	= 0x1000;
 
 SECTIONS {
 	. = _ROM_START;
@@ -24,7 +24,7 @@ SECTIONS {
 		_BSS_END = .;
 	}
 
-	VECTORS 0xfffa : AT(0xfffa) {
+	VECTORS 0xfff0 : AT(0xfff0) {
 		*(VECTORS);
 	}
 }

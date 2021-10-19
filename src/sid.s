@@ -5,16 +5,16 @@
 
 	section	TEXT
 sid_reset:
-	ldx	#$00
-.1	stz	SID,x
-	inx
-	cpx	#$80
+	ldx	#$0000
+.1	clr	SID,x
+	leax	1,x
+	cmpx	#$0080
 	bne	.1
 	lda	#$ff
-	ldx	#$00
+	ldx	#$0000
 .2	sta	SIDM,x
-	inx
-	cpx	#$08
+	leax	1,x
+	cmpx	#$0008
 	bne	.2
 	lda	#$0f
 	sta	SID0V
@@ -22,15 +22,12 @@ sid_reset:
 	rts
 
 sid_welcome_sound:
-	lda	#$c4
-	sta	SID0FL
-	lda	#$09
-	sta	SID0FH
+	ldd	#$09c4
+	std	SID0F
 	lda	#%00001001
 	sta	SID0AD
-	lda	#$0f
-	sta	SID0PL
-	sta	SID0PH
+	ldd	#$0f0f
+	std	SID0P
 	lda	#$ff
 	sta	SIDM0L
 	lda	#$10
@@ -38,15 +35,12 @@ sid_welcome_sound:
 	lda	#%01000001
 	sta	SID0VC
 
-	lda	#$a2
-	sta	SID1FL
-	lda	#$0e
-	sta	SID1FH
+	ldd	#$0ea2
+	std	SID1F
 	lda	#%00001001
 	sta	SID1AD
-	lda	#$0f
-	sta	SID1PL
-	sta	SID1PH
+	ldd	#$0f0f
+	sta	SID1P
 	lda	#$10
 	sta	SIDM1L
 	lda	#$ff

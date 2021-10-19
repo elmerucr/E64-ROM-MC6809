@@ -1,18 +1,18 @@
-AS = vasm6502_oldstyle
+AS = vasm6809_oldstyle
 LD = vlink
 
 VPATH = src
 
 # The test.o object must be first to ensure proper start of the executable code.
-OBJECTS = obj/init.o
+OBJECTS =	obj/reset.o
 
 # Order of the rest of the objects doesn't matter.
 OBJECTS +=	obj/tables.o obj/vectors.o obj/interrupts.o obj/sid.o \
-		obj/screeneditor.o obj/dsp.o
+		obj/screeneditor.o
 
 # Sometimes there seems be strange behaviour related to the -align option. Now
 # it seems ok. Another way would be to use the -devpac option?
-ASFLAGS = -Fvobj -wdc02 -quiet
+ASFLAGS = -Fvobj -6809 -quiet
 LDFLAGS = -b rawbin1 -Trom.ld -Mrom.map
 
 CCNATIVE = gcc
