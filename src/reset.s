@@ -15,7 +15,7 @@ vector_reset:
 
 	; place vectors in ram
 	ldx	#vicv_interrupt
-	stx	VICV_VECTOR_INDIRECT
+	stx	VECTOR_VICV_INDIRECT
 
 ;	lda	#<brk_interrupt
 ;	ldx	#>brk_interrupt
@@ -27,39 +27,27 @@ vector_reset:
 
 	ldx	#timer1_interrupt
 	stx	TIMER1_VECTOR_INDIRECT
-;
-;	lda	#<timer2_interrupt
-;	ldx	#>timer2_interrupt
-;	sta	TIMER2_VECTOR_INDIRECT
-;	stx	TIMER2_VECTOR_INDIRECT+1
-;
-;	lda	#<timer3_interrupt
-;	ldx	#>timer3_interrupt
-;	sta	TIMER3_VECTOR_INDIRECT
-;	stx	TIMER3_VECTOR_INDIRECT+1
-;
-;	lda	#<timer4_interrupt
-;	ldx	#>timer4_interrupt
-;	sta	TIMER4_VECTOR_INDIRECT
-;	stx	TIMER4_VECTOR_INDIRECT+1
-;
-;	lda	#<timer5_interrupt
-;	ldx	#>timer5_interrupt
-;	sta	TIMER5_VECTOR_INDIRECT
-;	stx	TIMER5_VECTOR_INDIRECT+1
-;
-;	lda	#<timer6_interrupt
-;	ldx	#>timer6_interrupt
-;	sta	TIMER6_VECTOR_INDIRECT
-;	stx	TIMER6_VECTOR_INDIRECT+1
-;
-;	lda	#<timer7_interrupt
-;	ldx	#>timer7_interrupt
-;	sta	TIMER7_VECTOR_INDIRECT
-;	stx	TIMER7_VECTOR_INDIRECT+1
-;
+
+	ldx	#timer2_interrupt
+	stx	TIMER2_VECTOR_INDIRECT
+
+	ldx	#timer3_interrupt
+	stx	TIMER3_VECTOR_INDIRECT
+
+	ldx	#timer4_interrupt
+	stx	TIMER4_VECTOR_INDIRECT
+
+	ldx	#timer5_interrupt
+	stx	TIMER5_VECTOR_INDIRECT
+
+	ldx	#timer6_interrupt
+	stx	TIMER6_VECTOR_INDIRECT
+
+	ldx	#timer7_interrupt
+	stx	TIMER7_VECTOR_INDIRECT
+
 	; Set up border size and colors
-	lda	#$10
+	lda	#16
 	sta	BLIT_HBS
 
 	ldd	c64_black
@@ -74,16 +62,16 @@ vector_reset:
 	; Set up blitdescriptor 0 (main text screen)
 	lda	#%10001010
 	ldx	#BLIT_D_00
-	sta	$00,x
-	lda	#%00000000	; not expanded, not mirrored
-	sta	$01,x
+	sta	0,x
+	clra			; not expanded, not mirrored
+	sta	1,x
 	lda	#$56		; size 64x32
-	sta	$02,x
+	sta	2,x
 	ldd	c64_lightblue
-	std	$04,x
-	lda	#$00
-	clr	$06,x
-	clr	$07,x
+	std	4,x
+	clra
+	clr	6,x
+	clr	7,x
 
 	; Set up blit memory inspection
 	ldd	#$0080

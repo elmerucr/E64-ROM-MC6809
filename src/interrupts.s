@@ -36,7 +36,7 @@ vector_irq:
 .1	lda	VICV_SR
 	beq	.2
 	sta	VICV_SR
-	jmp	[VICV_VECTOR_INDIRECT]
+	jmp	[VECTOR_VICV_INDIRECT]
 .2	lda	TIMER_SR
 	beq	interrupt_end
 	cmpa	#%00000001
@@ -139,7 +139,7 @@ vicv_interrupt:
 	lda	#BLIT_CMD_DRAW_BORDER
 	sta	BLIT_CR
 	bra	interrupt_end
-;
+
 ;brk_interrupt:
 ;	; do something...
 ;	bra	interrupt_end
@@ -151,27 +151,3 @@ vicv_interrupt:
 ;	; do something
 interrupt_end:
 	rti
-
-;timer0_interrupt:
-
-;timer1_interrupt:
-;	jmp	interrupt_end
-;
-;timer2_interrupt:
-;	jmp	interrupt_end
-;
-;timer3_interrupt:
-;	jmp	interrupt_end
-;
-;timer4_interrupt:
-;	jmp	interrupt_end
-;
-;timer5_interrupt:
-;	jmp	interrupt_end
-;
-;timer6_interrupt:
-;	jmp	interrupt_end
-;
-;timer7_interrupt:
-;	jmp	interrupt_end
-;
