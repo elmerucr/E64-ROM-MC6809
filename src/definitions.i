@@ -21,7 +21,7 @@ TIMER7_VECTOR_INDIRECT	equ	$0120
 VICV		equ	$d000
 VICV_SR		equ	VICV
 
-; blit
+; blit general
 BLIT		equ	$d100
 BLIT_CR		equ	BLIT
 BLIT_NO		equ	BLIT+$1
@@ -29,11 +29,15 @@ BLIT_HBS	equ	BLIT+$2
 BLIT_DATA	equ	BLIT+$3
 BLIT_XPOS	equ	BLIT+$4		; 16 bit
 BLIT_YPOS	equ	BLIT+$6		; 16 bit
-BLIT_CLC	equ	BLIT+$8
-BLIT_HBC	equ	BLIT+$a
-BLIT_PAGE	equ	BLIT+$e
+BLIT_CLC	equ	BLIT+$8		; 16 bit
+BLIT_HBC	equ	BLIT+$a		; 16 bit
+;
+;
+BLIT_PAGE	equ	BLIT+$e		; 16 bit
 
-BLIT_BLINK_INTERVAL	equ	BLIT+$14
+; blit specific to active blit (register 1)
+BLIT_BLINK_INTERVAL	equ	BLIT+$14	; read/write
+BLIT_PITCH		equ	BLIT+$15	; read only
 
 BLIT_CMD_SWAP_BUFFERS		equ	%00000001
 BLIT_CMD_CLEAR_FRAMEBUFFER	equ	%00000010
@@ -111,5 +115,7 @@ CIA_CMD_CLEAR_EVENT_LIST	equ	%10000000
 
 ; ascii
 ASCII_LF		equ	$0a
+ASCII_CURSOR_DOWN	equ	$11
 ASCII_CURSOR_RIGHT	equ	$1d
+ASCII_CURSOR_UP		equ	$91
 ASCII_CURSOR_LEFT	equ	$9d

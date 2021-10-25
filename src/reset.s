@@ -7,10 +7,10 @@ var1	dc	1
 
 	section	TEXT
 rom_version:
-	db	'rom v0.2 20211019',0
+	db	'rom v0.2 20211023',0
 vector_reset:
 	; set stackpointers
-	lds	#$1000		; this enables nmi as well
+	lds	#$1000		; write to sp enables nmi
 	ldu	#$0800
 
 	; place vectors in ram
@@ -62,13 +62,13 @@ vector_reset:
 	; Set up blitdescriptor 0 (main text screen)
 	lda	#%10001010
 	ldx	#BLIT_D_00
-	sta	0,x
+	sta	,x
 	clra			; not expanded, not mirrored
 	sta	1,x
 	lda	#$56		; size 64x32
 	sta	2,x
 	ldd	c64_lightblue
-	std	4,x
+	std	4,x		; text color
 	clra
 	clr	6,x
 	clr	7,x
@@ -100,4 +100,15 @@ vector_reset:
 	; enable firq/irq
 	andcc	#%10101111
 
-	jmp	se_start
+
+
+	jsr	se_init
+
+	ldx	#welc1
+	jsr	puts
+
+	jmp	se_loop
+
+	section	RODATA
+
+welc1	db	ASCII_LF,'E64 Virtual Computer System',ASCII_LF,0
