@@ -36,8 +36,13 @@ BLIT_HBC	equ	BLIT+$a		; 16 bit
 BLIT_PAGE	equ	BLIT+$e		; 16 bit
 
 ; blit specific to active blit (register 1)
+BLIT_NO_OF_TILES	equ	BLIT+$10	; 16 bit read only
+BLIT_CURSOR_POS		equ	BLIT+$12	; 16 bit pointer
 BLIT_BLINK_INTERVAL	equ	BLIT+$14	; read/write
 BLIT_PITCH		equ	BLIT+$15	; read only
+BLIT_TILE_CHAR		equ	BLIT+$16	; read/write
+BLIT_TILE_FG_COLOR	equ	BLIT+$18	; read/write
+BLIT_TILE_BG_COLOR	equ	BLIT+$1a	; read/write
 
 BLIT_CMD_SWAP_BUFFERS		equ	%00000001
 BLIT_CMD_CLEAR_FRAMEBUFFER	equ	%00000010

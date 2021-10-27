@@ -7,7 +7,7 @@ var1	dc	1
 
 	section	TEXT
 rom_version:
-	db	'rom v0.2 20211023',0
+	db	'rom v0.2 20211025',0
 vector_reset:
 	; set stackpointers
 	lds	#$1000		; write to sp enables nmi
@@ -111,4 +111,5 @@ vector_reset:
 
 	section	RODATA
 
-welc1	db	ASCII_LF,'E64 Virtual Computer System',ASCII_LF,0
+welc1	db	ASCII_LF, 'E64 Computer System  (C)2021 elmerucr', ASCII_LF
+	db	ASCII_LF, 'Motorola 6809 cpu  64k/16mb ram system', ASCII_LF, 0
