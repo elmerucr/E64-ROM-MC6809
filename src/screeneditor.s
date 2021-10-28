@@ -46,30 +46,36 @@ add_bottom_row:
 	tfr	x,y			; y points to first row
 	ldb	BLIT_PITCH
 	abx				; x points to second row
+
 .1	stx	BLIT_CURSOR_POS
-	leax	1,x
 	lda	BLIT_TILE_CHAR
 	sty	BLIT_CURSOR_POS
-	leay	1,y
 	sta	BLIT_TILE_CHAR
+	stx	BLIT_CURSOR_POS
+	ldd	BLIT_TILE_FG_COLOR
+	sty	BLIT_CURSOR_POS
+	std	BLIT_TILE_FG_COLOR
+	stx	BLIT_CURSOR_POS
+	ldd	BLIT_TILE_BG_COLOR
+	sty	BLIT_CURSOR_POS
+	std	BLIT_TILE_BG_COLOR
+
+	leax	1,x
+	leay	1,y
 	cmpx	BLIT_NO_OF_TILES
 	bne	.1
-
 	sty	BLIT_CURSOR_POS
-	lda	#'b'
+	lda	#' '
 	sta	BLIT_DATA
 	ldb	BLIT_PITCH
-.2	lda	BLIT_CMD_PUT_SYMBOL_AT_CURSOR
+.2	lda	#BLIT_CMD_PUT_SYMBOL_AT_CURSOR
 	sta	BLIT_CR
 	decb
 	beq	.3
-	lda	BLIT_CMD_INCREASE_CURSOR_POS
+	lda	#BLIT_CMD_INCREASE_CURSOR_POS
 	sta	BLIT_CR
 	bra	.2
-.3
-
-
-	puls	b,a			; get old cursor pos
+.3	puls	b,a			; get old cursor pos
 	std	BLIT_CURSOR_POS		; and put it back
 	ldb	BLIT_PITCH
 	lda	#BLIT_CMD_DECREASE_CURSOR_POS
@@ -81,7 +87,7 @@ add_bottom_row:
 
 add_top_row:
 	pshs	b,a
-	ldd	c64_red
+	ldd	c64_lightblue
 	std	BLIT_HBC
 	puls	b,a
 	rts

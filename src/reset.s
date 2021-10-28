@@ -1,48 +1,49 @@
 	include	"definitions.i"
 
-	global	vector_reset
+	global	exc_reset
 
 	section	BSS
 var1	dc	1
 
 	section	TEXT
 rom_version:
-	db	'rom v0.2 20211025',0
-vector_reset:
+	db	'E64-ROM v0.2 20211028',0
+exc_reset:
 	; set stackpointers
 	lds	#$1000		; write to sp enables nmi
 	ldu	#$0800
 
 	; place vectors in ram
+	ldx	#exc_illop
+	stx	VECTOR_ILLOP_INDIRECT
+	ldx	#exc_swi3
+	stx	VECTOR_SWI3_INDIRECT
+	ldx	#exc_swi2
+	stx	VECTOR_SWI2_INDIRECT
+	ldx	#exc_firq
+	stx	VECTOR_FIRQ_INDIRECT
+	ldx	#exc_irq
+	stx	VECTOR_IRQ_INDIRECT
+	ldx	#exc_swi
+	stx	VECTOR_SWI_INDIRECT
+	ldx	#exc_nmi
+	stx	VECTOR_NMI_INDIRECT
 	ldx	#vicv_interrupt
 	stx	VECTOR_VICV_INDIRECT
-
-;	lda	#<brk_interrupt
-;	ldx	#>brk_interrupt
-;	sta	BRK_VECTOR_INDIRECT
-;	stx	BRK_VECTOR_INDIRECT+1
-;
 	ldx	#timer0_interrupt
 	stx	TIMER0_VECTOR_INDIRECT
-
 	ldx	#timer1_interrupt
 	stx	TIMER1_VECTOR_INDIRECT
-
 	ldx	#timer2_interrupt
 	stx	TIMER2_VECTOR_INDIRECT
-
 	ldx	#timer3_interrupt
 	stx	TIMER3_VECTOR_INDIRECT
-
 	ldx	#timer4_interrupt
 	stx	TIMER4_VECTOR_INDIRECT
-
 	ldx	#timer5_interrupt
 	stx	TIMER5_VECTOR_INDIRECT
-
 	ldx	#timer6_interrupt
 	stx	TIMER6_VECTOR_INDIRECT
-
 	ldx	#timer7_interrupt
 	stx	TIMER7_VECTOR_INDIRECT
 

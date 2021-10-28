@@ -1,12 +1,12 @@
 	include	"definitions.i"
 
-	global	vector_illop
-	global	vector_swi3
-	global	vector_swi2
-	global	vector_firq
-	global	vector_irq
-	global	vector_swi
-	global	vector_nmi
+	global	exc_illop
+	global	exc_swi3
+	global	exc_swi2
+	global	exc_firq
+	global	exc_irq
+	global	exc_swi
+	global	exc_nmi
 	global	vicv_interrupt
 	global	timer0_interrupt
 	global	timer1_interrupt
@@ -19,37 +19,27 @@
 
 	section	TEXT
 
-vector_illop:
+exc_illop:
+exc_swi3:
+exc_swi2:
+exc_firq:
 	rti
 
-vector_swi3:
-	rti
-
-vector_swi2:
-
-vector_firq:
-	ldd	#$dead
-	ldd	#$beef
-	rti
-
-vector_irq:
+exc_irq:
 .1	lda	VICV_SR
 	beq	.2
 	sta	VICV_SR
 	jmp	[VECTOR_VICV_INDIRECT]
 .2	lda	TIMER_SR
-	beq	interrupt_end
+	beq	.3
 	cmpa	#%00000001
 	bne	.3
 	sta	TIMER_SR
 	jmp	[TIMER0_VECTOR_INDIRECT]
-.3	bra	interrupt_end
+.3	rti
 
-vector_swi:
-	rti
-
-vector_nmi:
-	coma
+exc_swi:
+exc_nmi:
 	rti
 
 timer0_interrupt:
@@ -57,20 +47,13 @@ timer0_interrupt:
 	sta	BLIT_CR
 	rti
 timer1_interrupt:
-	rti
 timer2_interrupt:
-	rti
 timer3_interrupt:
-	rti
 timer4_interrupt:
-	rti
 timer5_interrupt:
-	rti
 timer6_interrupt:
-	rti
 timer7_interrupt:
 	rti
-
 
 ;irq_brk_interrupt:
 ;	pha
@@ -138,16 +121,4 @@ vicv_interrupt:
 
 	lda	#BLIT_CMD_DRAW_BORDER
 	sta	BLIT_CR
-	bra	interrupt_end
-
-;brk_interrupt:
-;	; do something...
-;	bra	interrupt_end
-;
-;nmi_interrupt:
-;	pha
-;	phx
-;	phy
-;	; do something
-interrupt_end:
 	rti

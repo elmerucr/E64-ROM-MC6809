@@ -17,10 +17,6 @@
 
 	section	RODATA
 
-; just something
-t1	db	"This is a test",0
-t2	db	"Error: can't write byte to disk",0
-
 ; C64 colors (VirtualC64)
 c64_black       dw	$f000
 c64_white       dw	$ffff

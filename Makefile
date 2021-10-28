@@ -7,7 +7,7 @@ VPATH = src
 OBJECTS =	obj/reset.o
 
 # Order of the rest of the objects doesn't matter.
-OBJECTS +=	obj/tables.o obj/vectors.o obj/interrupts.o obj/sid.o \
+OBJECTS +=	obj/tables.o obj/vectors.o obj/exceptions.o obj/sid.o \
 		obj/screeneditor.o
 
 # Sometimes there seems be strange behaviour related to the -align option. Now
