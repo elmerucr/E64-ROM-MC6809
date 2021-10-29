@@ -123,3 +123,107 @@ ASCII_CURSOR_DOWN	equ	$11
 ASCII_CURSOR_RIGHT	equ	$1d
 ASCII_CURSOR_UP		equ	$91
 ASCII_CURSOR_LEFT	equ	$9d
+
+; music notes index
+N_C0_	equ	0
+N_C0S	equ	2
+N_D0_	equ	4
+N_D0S	equ	6
+N_E0_	equ	8
+N_F0_	equ	10
+N_F0S	equ	12
+N_G0_	equ	14
+N_G0S	equ	16
+N_A0_	equ	18
+N_A0S	equ	20
+N_B0_	equ	22
+
+N_C1_	equ	24
+N_C1S	equ	26
+N_D1_	equ	28
+N_D1S	equ	30
+N_E1_	equ	32
+N_F1_	equ	34
+N_F1S	equ	36
+N_G1_	equ	38
+N_G1S	equ	40
+N_A1_	equ	42
+N_A1S	equ	44
+N_B1_	equ	46
+
+N_C2_	equ	48
+N_C2S	equ	50
+N_D2_	equ	52
+N_D2S	equ	54
+N_E2_	equ	56
+N_F2_	equ	58
+N_F2S	equ	60
+N_G2_	equ	62
+N_G2S	equ	64
+N_A2_	equ	66
+N_A2S	equ	68
+N_B2_	equ	70
+
+N_C3_	equ	72
+N_C3S	equ	74
+N_D3_	equ	76
+N_D3S	equ	78
+N_E3_	equ	80
+N_F3_	equ	82
+N_F3S	equ	84
+N_G3_	equ	86
+N_G3S	equ	88
+N_A3_	equ	90
+N_A3S	equ	92
+N_B3_	equ	94
+
+N_C4_	equ	96
+N_C4S	equ	98
+N_D4_	equ	100
+N_D4S	equ	102
+N_E4_	equ	104
+N_F4_	equ	106
+N_F4S	equ	108
+N_G4_	equ	110
+N_G4S	equ	112
+N_A4_	equ	114
+N_A4S	equ	116
+N_B4_	equ	118
+
+N_C5_	equ	120
+N_C5S	equ	122
+N_D5_	equ	124
+N_D5S	equ	126
+N_E5_	equ	128
+N_F5_	equ	130
+N_F5S	equ	132
+N_G5_	equ	134
+N_G5S	equ	136
+N_A5_	equ	138
+N_A5S	equ	140
+N_B5_	equ	142
+
+N_C6_	equ	144
+N_C6S	equ	146
+N_D6_	equ	148
+N_D6S	equ	150
+N_E6_	equ	152
+N_F6_	equ	154
+N_F6S	equ	156
+N_G6_	equ	158
+N_G6S	equ	160
+N_A6_	equ	162
+N_A6S	equ	164
+N_B6_	equ	166
+
+N_C7_	equ	168
+N_C7S	equ	170
+N_D7_	equ	172
+N_D7S	equ	174
+N_E7_	equ	176
+N_F7_	equ	178
+N_F7S	equ	180
+N_G7_	equ	182
+N_G7S	equ	184
+N_A7_	equ	186
+N_A7S	equ	188

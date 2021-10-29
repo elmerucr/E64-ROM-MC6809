@@ -32,9 +32,8 @@ clear_screen:
 	sta	BLIT_CR
 	lda	#BLIT_CMD_INCREASE_CURSOR_POS
 	sta	BLIT_CR
-	lda	BLIT_CR				; check for pos 0
-	anda	#%10000000
-	beq	.1
+	lda	BLIT_CR			; check for pos 0 (bit 7)
+	bpl	.1
 	puls	a
 	rts
 
