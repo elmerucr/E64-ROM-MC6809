@@ -39,8 +39,8 @@ clear_screen:
 
 add_bottom_row:
 	pshs	y,x,b,a
-	ldd	BLIT_CURSOR_POS
-	pshs	b,a			; save old cursor pos
+	;ldd	BLIT_CURSOR_POS
+	;pshs	b,a			; save old cursor pos
 	ldx	#$0000
 	tfr	x,y			; y points to first row
 	ldb	BLIT_PITCH
@@ -74,8 +74,8 @@ add_bottom_row:
 	lda	#BLIT_CMD_INCREASE_CURSOR_POS
 	sta	BLIT_CR
 	bra	.2
-.3	puls	b,a			; get old cursor pos
-	std	BLIT_CURSOR_POS		; and put it back
+.3	;puls	b,a			; get old cursor pos
+	;std	BLIT_CURSOR_POS		; and put it back
 	ldb	BLIT_PITCH
 	lda	#BLIT_CMD_DECREASE_CURSOR_POS
 .4	sta	BLIT_CR
@@ -88,8 +88,26 @@ add_top_row:
 	pshs	b,a
 	ldd	c64_lightblue
 	std	BLIT_HBC
-	puls	b,a
 	rts
+
+	;ldd	BLIT_CURSOR_POS
+	;pshs	b,a			; save old cursor pos
+	;clr	BLIT_CURSOR_POS
+	;lda	#BLIT_CMD_DECREASE_CURSOR_POS
+	;sta	BLIT_CR
+	;ldx	BLIT_CURSOR_POS		; x now points to last position
+	;tfr	x,d
+	;subd	BLIT_PITCH
+	;tfr	d,y			; y now points to one row up
+
+
+	;puls	b,a
+	;std	BLIT_CURSOR_POS		; restore old cursor pos
+
+
+	;puls	b,a
+
+	;rts
 
 ; putsymbol - expects char to be in ac
 ; doesn't change registers
