@@ -39,8 +39,8 @@ clear_screen:
 
 add_bottom_row:
 	pshs	y,x,b,a
-	;ldd	BLIT_CURSOR_POS
-	;pshs	b,a			; save old cursor pos
+	ldd	BLIT_CURSOR_POS
+	pshs	b,a			; save old cursor pos
 	ldx	#$0000
 	tfr	x,y			; y points to first row
 	ldb	BLIT_PITCH
@@ -58,11 +58,11 @@ add_bottom_row:
 	ldd	BLIT_TILE_BG_COLOR
 	sty	BLIT_CURSOR_POS
 	std	BLIT_TILE_BG_COLOR
-
-	leax	1,x
+	leax	1,x			; increase both pointers
 	leay	1,y
-	cmpx	BLIT_NO_OF_TILES
+	cmpx	BLIT_NO_OF_TILES	; did we reach the last char?
 	bne	.1
+
 	sty	BLIT_CURSOR_POS
 	lda	#' '
 	sta	BLIT_DATA
@@ -74,8 +74,8 @@ add_bottom_row:
 	lda	#BLIT_CMD_INCREASE_CURSOR_POS
 	sta	BLIT_CR
 	bra	.2
-.3	;puls	b,a			; get old cursor pos
-	;std	BLIT_CURSOR_POS		; and put it back
+.3	puls	b,a			; get old cursor pos
+	std	BLIT_CURSOR_POS		; and put it back
 	ldb	BLIT_PITCH
 	lda	#BLIT_CMD_DECREASE_CURSOR_POS
 .4	sta	BLIT_CR
@@ -85,21 +85,36 @@ add_bottom_row:
 	rts
 
 add_top_row:
-	pshs	b,a
-	ldd	c64_lightblue
-	std	BLIT_HBC
-	rts
+	;pshs	b,a
+	;ldd	c64_lightblue
+	;std	BLIT_HBC
+	;puls	b,a
+	;rts
 
-	;ldd	BLIT_CURSOR_POS
-	;pshs	b,a			; save old cursor pos
-	;clr	BLIT_CURSOR_POS
-	;lda	#BLIT_CMD_DECREASE_CURSOR_POS
-	;sta	BLIT_CR
-	;ldx	BLIT_CURSOR_POS		; x now points to last position
-	;tfr	x,d
-	;subd	BLIT_PITCH
-	;tfr	d,y			; y now points to one row up
+	pshs	y,x,b,a
 
+	ldx	BLIT_CURSOR_POS		; x now points to last position
+	tfr	x,d
+	subb	BLIT_PITCH		; subtract pitch from d
+	sbca	#$00
+	tfr	d,y			; y now points to one row up
+
+.1	sty	BLIT_CURSOR_POS
+	lda	BLIT_TILE_CHAR
+	stx	BLIT_CURSOR_POS
+	sta	BLIT_TILE_CHAR
+	sty	BLIT_CURSOR_POS
+	ldd	BLIT_TILE_FG_COLOR
+	stx	BLIT_CURSOR_POS
+	std	BLIT_TILE_FG_COLOR
+	sty	BLIT_CURSOR_POS
+	ldd	BLIT_TILE_BG_COLOR
+	stx	BLIT_CURSOR_POS
+	std	BLIT_TILE_BG_COLOR
+
+	leax	-1,x
+	leay	-1,y
+	bne	.1
 
 	;puls	b,a
 	;std	BLIT_CURSOR_POS		; restore old cursor pos
@@ -107,7 +122,8 @@ add_top_row:
 
 	;puls	b,a
 
-	;rts
+	puls	y,x,b,a
+	rts
 
 ; putsymbol - expects char to be in ac
 ; doesn't change registers
