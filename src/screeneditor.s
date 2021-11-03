@@ -85,15 +85,9 @@ add_bottom_row:
 	rts
 
 add_top_row:
-	;pshs	b,a
-	;ldd	c64_lightblue
-	;std	BLIT_HBC
-	;puls	b,a
-	;rts
-
 	pshs	y,x,b,a
 
-	ldx	BLIT_CURSOR_POS		; x now points to last position
+	ldx	BLIT_CURSOR_POS		; x now points to last position of screen
 	tfr	x,d
 	subb	BLIT_PITCH		; subtract pitch from d
 	sbca	#$00
@@ -111,16 +105,29 @@ add_top_row:
 	ldd	BLIT_TILE_BG_COLOR
 	stx	BLIT_CURSOR_POS
 	std	BLIT_TILE_BG_COLOR
-
 	leax	-1,x
 	leay	-1,y
+	cmpy	#-1
 	bne	.1
 
-	;puls	b,a
-	;std	BLIT_CURSOR_POS		; restore old cursor pos
+	; x currently points to the last char of the first row
+boe:
+	stx	BLIT_CURSOR_POS
+	lda	#' '
+	sta	BLIT_DATA
+	lda	#BLIT_CMD_PUT_SYMBOL_AT_CURSOR
+	ldb	#BLIT_CMD_DECREASE_CURSOR_POS
+.2	sta	BLIT_CR
+	leax	-1,x
+	stb	BLIT_CR
+	cmpx	#-1
+	bne	.2
 
-
-	;puls	b,a
+	lda	#BLIT_CMD_INCREASE_CURSOR_POS
+	ldb	BLIT_PITCH
+.3	sta	BLIT_CR
+	decb
+	bne	.3
 
 	puls	y,x,b,a
 	rts
