@@ -7,7 +7,7 @@ var1	dc	1
 
 	section	TEXT
 rom_version:
-	db	'E64-ROM v0.2 20211028',0
+	db	'E64-ROM v0.2 20211104',0
 exc_reset:
 	; set stackpointers
 	lds	#$1000		; write to sp enables nmi
