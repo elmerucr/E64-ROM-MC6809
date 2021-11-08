@@ -150,16 +150,16 @@ is_lf	cmpa	#ASCII_LF
 	bita	#%01000000	; did we reach column 0?
 	beq	.1
 	bita	#%00100000	; did we reach end of screen?
-	beq	finish
+	lbeq	finish
 	jsr	add_bottom_row
-	bra	finish
+	lbra	finish
 is_cr	cmpa	#ASCII_CURSOR_RIGHT
 	bne	is_cl
 	lda	#BLIT_CMD_INCREASE_CURSOR_POS
 	sta	BLIT_CR
 	lda	BLIT_CR
 	bita	#%00100000	; did we cross end of screen?
-	beq	finish
+	lbeq	finish
 	jsr	add_bottom_row
 	bra	finish
 is_cl	cmpa	#ASCII_CURSOR_LEFT
@@ -184,7 +184,7 @@ is_cd	cmpa	#ASCII_CURSOR_DOWN
 	bne	.1
 	bra	finish
 is_cu	cmpa	#ASCII_CURSOR_UP
-	bne	is_sym
+	bne	is_bksp
 	ldb	BLIT_PITCH
 .1	lda	#BLIT_CMD_DECREASE_CURSOR_POS
 	sta	BLIT_CR
@@ -195,6 +195,20 @@ is_cu	cmpa	#ASCII_CURSOR_UP
 .2	decb
 	bne	.1
 	bra	finish
+is_bksp cmpa	#ASCII_BACKSPACE
+	bne	is_sym
+
+	;lda	BLIT_TILE_CHAR
+	;ldx	BLIT_TILE_FG_COLOR
+	;ldy	BLIT_TILE_BG_COLOR
+	;ldb	#BLIT_CMD_DECREASE_CURSOR_POS
+	;stb	BLIT_CR
+	;sty	BLIT_TILE_BG_COLOR
+	;stx	BLIT_TILE_FG_COLOR
+	;sta	BLIT_TILE_CHAR
+
+	bra	finish
+
 is_sym	jsr	putsymbol
 	lda	#BLIT_CMD_INCREASE_CURSOR_POS
 	sta	BLIT_CR

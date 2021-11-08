@@ -7,7 +7,7 @@ var1	dc	1
 
 	section	TEXT
 rom_version:
-	db	'E64-ROM v0.2 20211104',0
+	db	'E64-ROM v0.2 20211107',0
 exc_reset:
 	; set stackpointers
 	lds	#$1000		; write to sp enables nmi
@@ -28,7 +28,7 @@ exc_reset:
 	stx	VECTOR_SWI_INDIRECT
 	ldx	#exc_nmi
 	stx	VECTOR_NMI_INDIRECT
-	ldx	#vicv_interrupt
+	ldx	#vicv_irq_handler
 	stx	VECTOR_VICV_INDIRECT
 	ldx	#timer0_interrupt
 	stx	TIMER0_VECTOR_INDIRECT
@@ -47,35 +47,13 @@ exc_reset:
 	ldx	#timer7_interrupt
 	stx	TIMER7_VECTOR_INDIRECT
 
-	; Set up border size and colors
-	lda	#16
-	sta	BLIT_HBS
-
-	ldd	c64_black
-	std	BLIT_HBC
-
-	ldd	c64_blue
-	std	BLIT_CLC
-
-	lda	#20
-	sta	BLIT_BLINK_INTERVAL
-
-	; Set up blitdescriptor 0 (main text screen)
-	lda	#%10001010
-	ldx	#BLIT_D_00
-	sta	,x
-	clra			; not expanded, not mirrored
-	sta	1,x
-	lda	#$56		; size 64x32
-	sta	2,x
-	ldd	c64_lightblue
-	std	4,x		; text color
-	clra
-	clr	6,x
-	clr	7,x
+	jsr	vicv_clear_kernel_displ_list
+	jsr	vicv_init_displ_list
+	jsr	vicv_set_bordersize_and_colors
+	jsr	vicv_set_blitdescriptor_0
 
 	; Set up blit memory inspection
-	ldd	#$0080
+	ldd	#$0000
 	std	BLIT_PAGE
 
 	; set up a 60Hz timer (3600bpm = $0e10)

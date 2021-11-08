@@ -7,7 +7,6 @@
 	global	exc_irq
 	global	exc_swi
 	global	exc_nmi
-	global	vicv_interrupt
 	global	timer0_interrupt
 	global	timer1_interrupt
 	global	timer2_interrupt
@@ -26,9 +25,9 @@ exc_firq:
 	rti
 
 exc_irq:
-.1	lda	VICV_SR
-	beq	.2
-	sta	VICV_SR
+.1	lda	VICV_SR			; check if vicv caused irq
+	beq	.2			; no, go to timer
+	sta	VICV_SR			; acknowledge irq
 	jmp	[VECTOR_VICV_INDIRECT]
 .2	lda	TIMER_SR
 	beq	.3
@@ -104,21 +103,3 @@ timer7_interrupt:
 ;.9	sta	TIMER_SR			; it must be timer 7
 ;	jmp	(TIMER7_VECTOR_INDIRECT)
 ;
-vicv_interrupt:
-	lda	#BLIT_CMD_SWAP_BUFFERS
-	sta	BLIT_CR
-	lda	#BLIT_CMD_CLEAR_FRAMEBUFFER
-	sta	BLIT_CR
-
-	clra
-	sta	BLIT_NO
-	ldd	#$0000
-	std	BLIT_XPOS
-	ldd	#$0010
-	std	BLIT_YPOS
-	lda	#BLIT_CMD_DRAW_BLIT
-	sta	BLIT_CR
-
-	lda	#BLIT_CMD_DRAW_BORDER
-	sta	BLIT_CR
-	rti
