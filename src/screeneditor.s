@@ -5,6 +5,11 @@
 	global	putchar
 	global	puts
 
+	section	BSS
+
+input_buffer:
+	db	64
+
 	section	TEXT
 se_init:
 	pshs	a
@@ -19,8 +24,31 @@ se_loop:
 	beq	se_loop
 	ldb	#BLIT_CMD_DEACTIVATE_CURSOR	; use br to preserve ac
 	stb	BLIT_CR
-	jsr	putchar
+	cmpa	#ASCII_LF
+	bne	.1
+	jsr	copy_line_to_textbuffer
+.1	jsr	putchar
+	lda	#BLIT_CMD_ACTIVATE_CURSOR
+	sta	BLIT_CR
 	bra	se_loop
+
+copy_line_to_textbuffer:
+	pshs	y,x,b,a
+	ldy	BLIT_CURSOR_POS		; store final cursor pos
+	ldx	#input_buffer
+	lda	#ASCII_CR
+	jsr	putchar			; go to start of line
+	cmpy	BLIT_CURSOR_POS		; were we already at column 0?
+	beq	.2			; yes, just write 0 and finish
+	lda	#BLIT_CMD_INCREASE_CURSOR_POS
+.1	ldb	BLIT_TILE_CHAR
+	sta	BLIT_CR
+	stb	,x+
+	cmpy	BLIT_CURSOR_POS
+	bne	.1
+.2	clr	,x			; place 0 at end of string
+	puls	y,x,b,a
+	rts
 
 clear_screen:
 	pshs	a
@@ -111,7 +139,6 @@ add_top_row:
 	bne	.1
 
 	; x currently points to the last char of the first row
-boe:
 	stx	BLIT_CURSOR_POS
 	lda	#' '
 	sta	BLIT_DATA
@@ -143,7 +170,7 @@ putsymbol:
 
 putchar:
 is_lf	cmpa	#ASCII_LF
-	bne	is_cr
+	bne	is_cri
 	ldb	#BLIT_CMD_INCREASE_CURSOR_POS
 .1	stb	BLIT_CR
 	lda	BLIT_CR
@@ -153,7 +180,7 @@ is_lf	cmpa	#ASCII_LF
 	lbeq	finish
 	jsr	add_bottom_row
 	lbra	finish
-is_cr	cmpa	#ASCII_CURSOR_RIGHT
+is_cri	cmpa	#ASCII_CURSOR_RIGHT
 	bne	is_cl
 	lda	#BLIT_CMD_INCREASE_CURSOR_POS
 	sta	BLIT_CR
@@ -161,14 +188,14 @@ is_cr	cmpa	#ASCII_CURSOR_RIGHT
 	bita	#%00100000	; did we cross end of screen?
 	lbeq	finish
 	jsr	add_bottom_row
-	bra	finish
+	lbra	finish
 is_cl	cmpa	#ASCII_CURSOR_LEFT
 	bne	is_cd
 	lda	#BLIT_CMD_DECREASE_CURSOR_POS
 	sta	BLIT_CR
 	lda	BLIT_CR
 	bita	#%00100000	; did we cross start of screen?
-	beq	finish
+	lbeq	finish
 	jsr	add_top_row
 	bra	finish
 is_cd	cmpa	#ASCII_CURSOR_DOWN
@@ -196,19 +223,24 @@ is_cu	cmpa	#ASCII_CURSOR_UP
 	bne	.1
 	bra	finish
 is_bksp cmpa	#ASCII_BACKSPACE
-	bne	is_sym
-
-	;lda	BLIT_TILE_CHAR
-	;ldx	BLIT_TILE_FG_COLOR
-	;ldy	BLIT_TILE_BG_COLOR
-	;ldb	#BLIT_CMD_DECREASE_CURSOR_POS
-	;stb	BLIT_CR
-	;sty	BLIT_TILE_BG_COLOR
-	;stx	BLIT_TILE_FG_COLOR
-	;sta	BLIT_TILE_CHAR
-
+	bne	is_cr
+	lda	#BLIT_CMD_DECREASE_CURSOR_POS
+	sta	BLIT_CR
+	lda	BLIT_CR
+	bita	#%00100000	; did we cross start of screen?
+	beq	.1
+	jsr	add_top_row
+.1	lda	#' '
+	jsr	putsymbol
 	bra	finish
-
+is_cr	cmpa	#ASCII_CR
+	bne	is_sym
+	ldb	#BLIT_CMD_DECREASE_CURSOR_POS
+.1	lda	BLIT_CR
+	bita	#%01000000	; are we at column 0?
+	bne	finish		; yes, finished
+	stb	BLIT_CR
+	bra	.1
 is_sym	jsr	putsymbol
 	lda	#BLIT_CMD_INCREASE_CURSOR_POS
 	sta	BLIT_CR
@@ -216,9 +248,7 @@ is_sym	jsr	putsymbol
 	bita	#%00100000	; did we cross end of screen?
 	beq	finish
 	jsr	add_bottom_row
-finish	lda	#BLIT_CMD_ACTIVATE_CURSOR
-	sta	BLIT_CR
-	rts
+finish	rts
 
 ; print string (0 terminated) - expects pointer in x
 puts:
