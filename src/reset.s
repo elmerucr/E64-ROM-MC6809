@@ -83,9 +83,11 @@ exc_reset:
 	ldx	#welc1
 	jsr	puts
 
+	jsr	escape
+
 	jmp	se_loop
 
 	section	RODATA
 
 welc1	db	ASCII_LF, 'E64 Computer System  (C)2021 elmerucr', ASCII_LF
-	db	ASCII_LF, 'Motorola 6809 cpu  64k/16mb ram system', ASCII_LF, 0
+	db	ASCII_LF, 'Motorola 6809 cpu  64k/16mb ram system', ASCII_LF, ASCII_LF, 0

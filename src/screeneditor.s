@@ -1,36 +1,39 @@
-	include	"definitions.i"
+		include	"definitions.i"
 
-	global	se_init
-	global	se_loop
-	global	putchar
-	global	puts
+		global	se_init
+		global	se_loop
+		global	putchar
+		global	puts
+		global	input_buffer
 
-	section	BSS
+		section	BSS
 
-input_buffer:
-	db	64
+input_buffer:	blk	64
 
-	section	TEXT
-se_init:
-	pshs	a
-	jsr	clear_screen
-	lda	#BLIT_CMD_ACTIVATE_CURSOR
-	sta	BLIT_CR
-	puls	a
-	rts
+		section	TEXT
 
-se_loop:
-	lda	CIA_AC				; do we have a character?
-	beq	se_loop
-	ldb	#BLIT_CMD_DEACTIVATE_CURSOR	; use br to preserve ac
-	stb	BLIT_CR
-	cmpa	#ASCII_LF
-	bne	.1
-	jsr	copy_line_to_textbuffer
-.1	jsr	putchar
-	lda	#BLIT_CMD_ACTIVATE_CURSOR
-	sta	BLIT_CR
-	bra	se_loop
+se_init:	pshs	a
+		jsr	clear_screen
+		lda	#BLIT_CMD_ACTIVATE_CURSOR
+		sta	BLIT_CR
+		puls	a
+		rts
+
+se_loop:	lda	CIA_AC			; do we have a char?
+		beq	se_loop
+		ldb	#BLIT_CMD_DEACTIVATE_CURSOR	; preserve ac
+		stb	BLIT_CR
+		cmpa	#ASCII_LF			; enter pressed?
+		bne	.1
+		jsr	copy_line_to_textbuffer		; yes, copy text in buffer
+		jsr	putchar
+		jsr	woz_parse_cmd
+		jsr	escape
+		bra	.2
+.1		jsr	putchar
+.2		lda	#BLIT_CMD_ACTIVATE_CURSOR
+		sta	BLIT_CR
+		bra	se_loop
 
 copy_line_to_textbuffer:
 	pshs	y,x,b,a
