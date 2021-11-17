@@ -19,7 +19,7 @@ se_init:	pshs	a
 		puls	a
 		rts
 
-se_loop:	lda	CIA_AC			; do we have a char?
+se_loop:	lda	CIA_AC				; do we have a char?
 		beq	se_loop
 		ldb	#BLIT_CMD_DEACTIVATE_CURSOR	; preserve ac
 		stb	BLIT_CR
@@ -171,6 +171,7 @@ putsymbol:
 	rts
 
 putchar:
+	pshs	b,a
 is_lf	cmpa	#ASCII_LF
 	bne	is_cri
 	ldb	#BLIT_CMD_INCREASE_CURSOR_POS
@@ -250,7 +251,8 @@ is_sym	jsr	putsymbol
 	bita	#%00100000	; did we cross end of screen?
 	beq	finish
 	jsr	add_bottom_row
-finish	rts
+finish	puls	b,a
+	rts
 
 ; print string (0 terminated) - expects pointer in x
 puts:

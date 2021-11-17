@@ -12,7 +12,7 @@ command_index:	ds	1
 
 input_loop:	ldx	#input_buffer
 input_loop2:	lda	,x+
-		beq	end
+		beq	.2
 		cmpa	#'.'
 		beq	input_loop2		; skip dots
 		cmpa	#' '
@@ -20,18 +20,15 @@ input_loop2:	lda	,x+
 		ldb	#cmd_names_end-cmd_names-1
 		ldy	#cmd_names
 .1		cmpa	b,y
-		bne	.2
+		bne	.3
 		stb	command_index
 		aslb
 		ldy	#function_table
 		jmp	[b,y]
-		bra	end
-
-.2		decb
+.2		rts				; end
+.3		decb
 		bpl	.1			; go to .1 if b >= 0
 		bra	syntax_error		; command doesn't exist
-
-end:		rts
 
 print_lf_dot:	lda	#ASCII_LF
 		jsr	putchar
@@ -54,12 +51,19 @@ function_table:	dw	cmd_mid		; m=monitor, i=introspect, d=disassemble?
 		dw	cmd_g
 		dw	cmd_x
 
-syntax_error:	lda	#'?'
+syntax_error:	tfr	x,d
+		subd	#input_buffer	; b now contains position of error
+		lda	#ASCII_CR
+		jsr	putchar
+		lda	#ASCII_CURSOR_RIGHT
+.1		jsr	putchar
+		decb
+		bne	.1
+		lda	#'?'
 		jsr	putchar
 		rts
 
 cmd_mid:	jsr	get_hex_word
-		jsr	print_lf_dot
 		rts
 
 cmd_colon:	rts
@@ -71,4 +75,8 @@ cmd_g:		rts
 cmd_x:		rts
 
 get_hex_word:	lda	,x+
-		rts
+		beq	.1			; go to end if zero
+		cmpa	#' '
+		beq	get_hex_word		; consume spaces
+		lda	,x+			; fetch char
+.1		rts
