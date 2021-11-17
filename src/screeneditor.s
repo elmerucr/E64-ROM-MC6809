@@ -26,9 +26,8 @@ se_loop:	lda	CIA_AC			; do we have a char?
 		cmpa	#ASCII_LF			; enter pressed?
 		bne	.1
 		jsr	copy_line_to_textbuffer		; yes, copy text in buffer
-		jsr	putchar
-		jsr	woz_parse_cmd
-		jsr	escape
+		jsr	input_loop			; execute in monitor
+		jsr	print_lf_dot
 		bra	.2
 .1		jsr	putchar
 .2		lda	#BLIT_CMD_ACTIVATE_CURSOR
