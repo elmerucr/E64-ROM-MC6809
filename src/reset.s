@@ -1,94 +1,92 @@
-	include	"definitions.i"
+		include	"definitions.i"
 
-	global	exc_reset
-
-	section	TEXT
-rom_version:
-	db	'E64-ROM v0.2 20211116',0
-exc_reset:
-	; set stackpointers
-	lds	#$1000		; write to sp enables nmi
-	ldu	#$0800
-
-	; place vectors in ram
-	ldx	#exc_illop
-	stx	VECTOR_ILLOP_INDIRECT
-	ldx	#exc_swi3
-	stx	VECTOR_SWI3_INDIRECT
-	ldx	#exc_swi2
-	stx	VECTOR_SWI2_INDIRECT
-	ldx	#exc_firq
-	stx	VECTOR_FIRQ_INDIRECT
-	ldx	#exc_irq
-	stx	VECTOR_IRQ_INDIRECT
-	ldx	#exc_swi
-	stx	VECTOR_SWI_INDIRECT
-	ldx	#exc_nmi
-	stx	VECTOR_NMI_INDIRECT
-	ldx	#vicv_irq_handler
-	stx	VECTOR_VICV_INDIRECT
-	ldx	#timer0_interrupt
-	stx	TIMER0_VECTOR_INDIRECT
-	ldx	#timer1_interrupt
-	stx	TIMER1_VECTOR_INDIRECT
-	ldx	#timer2_interrupt
-	stx	TIMER2_VECTOR_INDIRECT
-	ldx	#timer3_interrupt
-	stx	TIMER3_VECTOR_INDIRECT
-	ldx	#timer4_interrupt
-	stx	TIMER4_VECTOR_INDIRECT
-	ldx	#timer5_interrupt
-	stx	TIMER5_VECTOR_INDIRECT
-	ldx	#timer6_interrupt
-	stx	TIMER6_VECTOR_INDIRECT
-	ldx	#timer7_interrupt
-	stx	TIMER7_VECTOR_INDIRECT
-
-	jsr	vicv_clear_kernel_displ_list
-	jsr	vicv_init_displ_list
-	jsr	vicv_set_bordersize_and_colors
-	jsr	vicv_set_blitdescriptor_0
-
-	; Set up blit memory inspection
-	ldd	#$0000
-	std	BLIT_PAGE
-
-	; set up a 60Hz timer (3600bpm = $0e10)
-	ldd	#$0e10
-	std	TIMER_BPM
-	lda	#%00000001	; turn on timer 0
-	sta	TIMER_CR
-
-	; sids
-	jsr	sid_reset
-	jsr	sid_welcome_sound
-
-	; cia
-	lda	#CIA_CMD_CLEAR_EVENT_LIST
-	sta	CIA_CR
-	lda	#CIA_GENERATE_EVENTS
-	sta	CIA_CR
-	lda	#50		; 50 * 10ms = 0.5 s delay
-	sta	CIA_KRD
-	lda	#5
-	sta	CIA_KRS		; 5 * 10ms = 50ms rep speed
-
-	; enable firq/irq
-	andcc	#%10101111
+		global	exc_reset
 
 
+		section	TEXT
 
-	jsr	se_init
+rom_version:	db	'E64-ROM v0.2 20211116',0
 
-	ldx	#welc1
-	jsr	puts
+exc_reset:	; set stackpointers
+		lds	#$1000		; this write to sp enables nmi
+		ldu	#$0800
 
-	;jsr	escape
-	jsr	print_lf_dot
+		jsr	init_vectors
 
-	jmp	se_loop
+		jsr	vicv_clear_kernel_displ_list
+		jsr	vicv_init_displ_list
+		jsr	vicv_set_bordersize_and_colors
+		jsr	vicv_set_blitdescriptor_0
 
-	section	RODATA
+		; Set up blit memory inspection
+		ldd	#$0000
+		std	BLIT_PAGE
 
-welc1	db	ASCII_LF, 'E64 Computer System  (C)2021 elmerucr', ASCII_LF
-	db	ASCII_LF, 'Motorola 6809 cpu  64k/16mb ram system', ASCII_LF, 0
+		; set up a 60Hz timer (3600bpm = $0e10)
+		ldd	#$0e10
+		std	TIMER_BPM
+		lda	#%00000001	; turn on timer 0
+		sta	TIMER_CR
+
+		; sids
+		jsr	sid_reset
+		jsr	sid_welcome_sound
+
+		; cia
+		lda	#CIA_CMD_CLEAR_EVENT_LIST
+		sta	CIA_CR
+		lda	#CIA_GENERATE_EVENTS
+		sta	CIA_CR
+		lda	#50		; 50 * 10ms = 0.5 s delay
+		sta	CIA_KRD
+		lda	#5
+		sta	CIA_KRS		; 5 * 10ms = 50ms rep speed
+
+		andcc	#%10101111	; enable firq/irq
+		jsr	se_init		; init screen editor
+		ldx	#sysinfo
+		jsr	puts
+		jsr	prompt		; print prompt
+		jmp	se_loop		; jump to screen editor loop
+
+init_vectors:	pshs	x
+		ldx	#exc_illop
+		stx	VECTOR_ILLOP_INDIRECT
+		ldx	#exc_swi3
+		stx	VECTOR_SWI3_INDIRECT
+		ldx	#exc_swi2
+		stx	VECTOR_SWI2_INDIRECT
+		ldx	#exc_firq
+		stx	VECTOR_FIRQ_INDIRECT
+		ldx	#exc_irq
+		stx	VECTOR_IRQ_INDIRECT
+		ldx	#exc_swi
+		stx	VECTOR_SWI_INDIRECT
+		ldx	#exc_nmi
+		stx	VECTOR_NMI_INDIRECT
+		ldx	#vicv_irq_handler
+		stx	VECTOR_VICV_INDIRECT
+		ldx	#timer0_irq
+		stx	TIMER0_VECTOR_INDIRECT
+		ldx	#timer1_irq
+		stx	TIMER1_VECTOR_INDIRECT
+		ldx	#timer2_irq
+		stx	TIMER2_VECTOR_INDIRECT
+		ldx	#timer3_irq
+		stx	TIMER3_VECTOR_INDIRECT
+		ldx	#timer4_irq
+		stx	TIMER4_VECTOR_INDIRECT
+		ldx	#timer5_irq
+		stx	TIMER5_VECTOR_INDIRECT
+		ldx	#timer6_irq
+		stx	TIMER6_VECTOR_INDIRECT
+		ldx	#timer7_irq
+		stx	TIMER7_VECTOR_INDIRECT
+		puls	x
+		rts
+
+
+		section	RODATA
+
+sysinfo:	db	ASCII_LF, 'E64 Computer System  (C)2021 elmerucr', ASCII_LF
+		db	ASCII_LF, 'Motorola 6809 cpu  64k/16mb ram system', ASCII_LF, 0

@@ -82,8 +82,8 @@ nothex:		cmpx	xsav
 		stx	st
 tonextitem:	bra	nextitem
 
-; prbyte routine
-; expects byte in a, doesn't change registers
+		; prbyte routine
+		; expects byte in a, doesn't change registers
 prbyte:		pshs	a
 		lsra
 		lsra
@@ -99,8 +99,8 @@ prhex:		anda	#$0f	; Mask LSD for hex print.
 echo:		jsr	putchar
 		rts
 
-; run
-; jumps to address in xam, doesn't return
+		; run
+		; jumps to address in xam, doesn't return
 run:		jmp	[xam]
 
 notstor:	tst	mode
