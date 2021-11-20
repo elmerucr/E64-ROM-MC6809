@@ -7,7 +7,8 @@
 		section	BSS
 
 command_index:	ds	1
-byte:		ds	1
+hbyte:		ds	1
+lbyte:		ds	1
 start_address:	ds	2
 end_address:	ds	2
 
@@ -80,12 +81,11 @@ function_table:	dw	cmd_mid		; m=monitor, i=introspect, d=disassemble?
 cmd_mid:	jsr	consume_one_space
 		cmpa	#$00
 		bne	.1
-		jsr	get_hex_byte
-		lda	byte
-		sta	start_address
-		jsr	get_hex_byte
-		lda	byte
-		sta	start_address+1
+		jsr	get_hex_word
+		cmpa	#$00
+		bne	.1
+		ldd	hbyte
+		std	start_address
 .1		rts
 
 cmd_colon:
@@ -107,8 +107,11 @@ consume_one_space:
 		clra			; returns 0 on success
 		rts
 
-get_hex_byte:	clr	byte
-		ldb	#$08		; digit and shift counter
+get_hex_byte:	ldb	#$08		; digit and shift counter
+		bra	ghb0
+get_hex_word:	ldb	#$10
+ghb0:		clr	hbyte
+		clr	lbyte
 next_digit:	lda	,x+		; fetch char
 		eora	#$30		; map digits to $0-9
 		cmpa	#$09
@@ -121,14 +124,16 @@ is_digit:	asla
 		asla
 		asla
 hexshift:	asla
-		rol	byte
+		rol	lbyte
+		rol	hbyte
 		decb
 		beq	ghb_end
 		bitb	#%00000011
 		bne	hexshift	; no, loop
 		bra	next_digit
-ghb_end_error:	jsr	syntax_error
-ghb_end:	rts
+ghb_end_error:	lbra	syntax_error
+ghb_end:	lda	#$00		; return 0 on success
+		rts
 
 
 		section	RODATA
