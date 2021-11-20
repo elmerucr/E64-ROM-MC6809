@@ -7,8 +7,9 @@
 		section	BSS
 
 command_index:	ds	1
-h:		ds	1
-l:		ds	1
+byte:		ds	1
+start_address:	ds	2
+end_address:	ds	2
 
 
 		section	TEXT
@@ -31,12 +32,12 @@ input_loop2:	lda	,x+
 		jsr	[b,y]
 		bra	.3
 .2		decb				; no match, value in table
-		bpl	.1			; check as long as we're in the table
+		bpl	.1			; check while b>=0
 		jsr	syntax_error		; command doesn't exist
 .3		puls	y,x,b,a			; end
 		rts
 
-syntax_error:	pshs	b,a
+syntax_error:	pshs	b
 		tfr	x,d
 		subd	#input_buffer		; b now contains column after error
 		lda	#ASCII_CR
@@ -47,7 +48,8 @@ syntax_error:	pshs	b,a
 		bne	.1
 		lda	#'?'
 		jsr	putchar
-		puls	b,a
+		puls	b
+		lda	#$01			; returns 1
 		rts
 
 prompt:		pshs	a
@@ -75,8 +77,16 @@ function_table:	dw	cmd_mid		; m=monitor, i=introspect, d=disassemble?
 		dw	cmd_c
 		dw	cmd_mid
 
-cmd_mid:	jsr	get_hex_word
-		rts
+cmd_mid:	jsr	consume_one_space
+		cmpa	#$00
+		bne	.1
+		jsr	get_hex_byte
+		lda	byte
+		sta	start_address
+		jsr	get_hex_byte
+		lda	byte
+		sta	start_address+1
+.1		rts
 
 cmd_colon:
 cmd_a:		rts
@@ -90,36 +100,37 @@ cmd_g:		pshs	x
 cmd_c:		jsr	clear_screen
 		rts
 
-get_hex_word:	clr	h
-		clr	l
-get_hex_word2	lda	,x+		; fetch char
-		beq	ghw_end_error	; go to end if zero
+consume_one_space:
+		lda	,x+
 		cmpa	#' '
-		beq	get_hex_word2	; consume spaces
+		bne	syntax_error
+		clra			; returns 0 on success
+		rts
+
+get_hex_byte:	clr	byte
+		ldb	#$08		; digit and shift counter
+next_digit:	lda	,x+		; fetch char
 		eora	#$30		; map digits to $0-9
 		cmpa	#$09
-		bls	digit		; it's a digit
+		bls	is_digit	; it's a digit
 		adda	#$a9		; not digit, map letter "a" to "f" to $fa-$ff
 		cmpa	#$f9
-		bls	ghw_end_error	; no, character not hex
-
-digit:		asla
+		bls	ghb_end_error	; no, character not hex
+is_digit:	asla
 		asla
 		asla
 		asla
-
-		ldb	#$04
 hexshift:	asla
-		rol	l
-		rol	h
-		decb			; done 4 shifts?
+		rol	byte
+		decb
+		beq	ghb_end
+		bitb	#%00000011
 		bne	hexshift	; no, loop
-		bra	get_hex_word2
-
-ghw_end_error:	jsr	syntax_error
-ghw_end:	rts
+		bra	next_digit
+ghb_end_error:	jsr	syntax_error
+ghb_end:	rts
 
 
 		section	RODATA
 
-gogo:	db	ASCII_LF, "go to $xxx'x", ASCII_LF
+gogo:	db	ASCII_LF, "go to $xxxx",0
