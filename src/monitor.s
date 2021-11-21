@@ -7,8 +7,7 @@
 		section	BSS
 
 command_index:	ds	1
-hbyte:		ds	1
-lbyte:		ds	1
+temp_address:	ds	2
 start_address:	ds	2
 end_address:	ds	2
 
@@ -50,7 +49,6 @@ syntax_error:	pshs	b
 		lda	#'?'
 		jsr	putchar
 		puls	b
-		lda	#$01			; returns 1
 		rts
 
 prompt:		pshs	a
@@ -79,14 +77,24 @@ function_table:	dw	cmd_mid		; m=monitor, i=introspect, d=disassemble?
 		dw	cmd_mid
 
 cmd_mid:	jsr	consume_one_space
-		cmpa	#$00
-		bne	.1
+		bne	.3
 		jsr	get_hex_word
-		cmpa	#$00
-		bne	.1
-		ldd	hbyte
+		bne	.3
+		ldd	temp_address		; success, store address
 		std	start_address
-.1		rts
+		jsr	consume_one_space
+		bne	.1			; no space, end address = start address
+		jsr	get_hex_word		; space, so check for another word
+		bne	.3			; word is bad, end it
+		ldd	temp_address
+		bra	.2
+.1		ldd	start_address
+		addd	#$0008
+.2		std	end_address
+		jsr	display_mem
+		rts
+.3		jsr	syntax_error
+		rts
 
 cmd_colon:
 cmd_a:		rts
@@ -100,18 +108,46 @@ cmd_g:		pshs	x
 cmd_c:		jsr	clear_screen
 		rts
 
+		; data in start_address and end_address
+		;
+display_mem:	pshs	x,b,a
+		ldx	start_address
+
+.1		ldb	#$08
+		jsr	prompt
+		lda	#':'
+		jsr	putchar
+		jsr	pr_word_in_x
+
+.2		lda	#' '
+		jsr	putchar
+		lda	,x+
+		jsr	pr_byte
+
+		cmpx	end_address
+		beq	.3
+
+		decb
+		beq	.1
+		bra	.2
+
+.3		puls	x,b,a
+		rts
+
 consume_one_space:
 		lda	,x+
 		cmpa	#' '
-		bne	syntax_error
+		bne	.1
 		clra			; returns 0 on success
+		rts
+.1		lda	#$01
 		rts
 
 get_hex_byte:	ldb	#$08		; digit and shift counter
 		bra	ghb0
 get_hex_word:	ldb	#$10
-ghb0:		clr	hbyte
-		clr	lbyte
+ghb0:		clr	temp_address
+		clr	temp_address+1
 next_digit:	lda	,x+		; fetch char
 		eora	#$30		; map digits to $0-9
 		cmpa	#$09
@@ -124,15 +160,16 @@ is_digit:	asla
 		asla
 		asla
 hexshift:	asla
-		rol	lbyte
-		rol	hbyte
+		rol	temp_address+1
+		rol	temp_address
 		decb
 		beq	ghb_end
 		bitb	#%00000011
 		bne	hexshift	; no, loop
 		bra	next_digit
-ghb_end_error:	lbra	syntax_error
-ghb_end:	lda	#$00		; return 0 on success
+ghb_end_error:	lda	#$01		; error
+		rts
+ghb_end:	clra			; return 0 on success
 		rts
 
 

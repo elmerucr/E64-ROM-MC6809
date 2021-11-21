@@ -7,6 +7,9 @@
 		global	putsymbol
 		global	input_buffer
 		global	clear_screen
+		global	pr_byte
+		global	pr_word_in_d
+		global	pr_word_in_x
 
 
 		section	BSS
@@ -265,4 +268,33 @@ puts:		pshs	x,a
 		jsr	putchar
 		bra	.1
 .2		puls	x,a
+		rts
+
+		; print hex byte in a
+pr_byte:	pshs	a	; store a
+		lsra
+		lsra
+		lsra
+		lsra
+		bsr	pr_hex
+		puls	a
+pr_hex:		anda	#$0f
+		ora	#$30
+		cmpa	#$39
+		bls	echo
+		adda	#$27
+echo:		jsr	putchar
+		rts
+
+		; print word in d
+pr_word_in_d:	jsr	pr_byte
+		exg	a,b
+		jsr	pr_byte
+		exg	a,b
+		rts
+
+pr_word_in_x:	pshs	b,a
+		tfr	x,d
+		jsr	pr_word_in_d
+		puls	b,a
 		rts
