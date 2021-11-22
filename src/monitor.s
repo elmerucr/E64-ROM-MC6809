@@ -113,25 +113,40 @@ cmd_c:		jsr	clear_screen
 display_mem:	pshs	x,b,a
 		ldx	start_address
 
-.1		ldb	#$08
-		jsr	prompt
+.1		jsr	prompt
 		lda	#':'
 		jsr	putchar
 		jsr	pr_word_in_x
 
+		ldb	#$08
 .2		lda	#' '
 		jsr	putchar
 		lda	,x+
 		jsr	pr_byte
+		decb
+		bne	.2
+
+		lda	#' '
+		jsr	putchar
+
+		ldd	#$f226		; darker backgroundd color
+		std	BLIT_D_00+6
+
+		leax	-8,x
+		ldb	#$08
+.3		lda	,x+
+		jsr	putsymbol
+		lda	#ASCII_CURSOR_RIGHT
+		jsr	putchar
+		decb
+		bne	.3
+
+		ldd	#$0000		; turn off background color
+		std	BLIT_D_00+6
 
 		cmpx	end_address
-		beq	.3
-
-		decb
-		beq	.1
-		bra	.2
-
-.3		puls	x,b,a
+		bls	.1
+		puls	x,b,a
 		rts
 
 consume_one_space:
