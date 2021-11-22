@@ -89,7 +89,6 @@ cmd_mid:	jsr	consume_one_space
 		ldd	temp_address
 		bra	.2
 .1		ldd	start_address
-		addd	#$0008
 .2		std	end_address
 		jsr	display_mem
 		rts
