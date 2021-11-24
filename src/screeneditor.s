@@ -14,7 +14,7 @@
 
 		section	BSS
 
-input_buffer:	blk	64
+input_buffer:	blk	128
 
 
 		section	TEXT
@@ -33,8 +33,8 @@ se_loop:	lda	CIA_AC				; do we have a char?
 		cmpa	#ASCII_LF			; enter pressed?
 		bne	.1
 		jsr	copy_line_to_textbuffer		; yes, copy text in buffer
-		jsr	input_loop			; execute in monitor
-		jsr	prompt
+		jsr	mon_process			; execute in monitor
+		;jsr	prompt
 		bra	.2
 .1		jsr	putchar
 .2		lda	#BLIT_CMD_ACTIVATE_CURSOR
@@ -43,24 +43,40 @@ se_loop:	lda	CIA_AC				; do we have a char?
 
 copy_line_to_textbuffer:
 		pshs	y,x,b,a
-		ldy	BLIT_CURSOR_POS		; store final cursor pos
+		ldy	BLIT_CURSOR_POS
 		ldx	#input_buffer
 		lda	#ASCII_CR
-		jsr	putchar			; go to start of line
-		cmpy	BLIT_CURSOR_POS		; were we already at column 0?
-		beq	.2			; yes, just write 0 and finish
+		jsr	putchar
 		lda	#BLIT_CMD_INCREASE_CURSOR_POS
 .1		ldb	BLIT_TILE_CHAR
-		sta	BLIT_CR
 		stb	,x+
-		cmpy	BLIT_CURSOR_POS
-		bne	.1
-.2		clr	,x			; place 0 at end of string
+		sta	BLIT_CR			; move cursor to right
+		ldb	BLIT_CR
+		bitb	#%01000000
+		beq	.1
+		clr	,-x			; place 0 at end of string
+		sty	BLIT_CURSOR_POS
 		puls	y,x,b,a
 		rts
 
-clear_screen:
-		pshs	a
+;		pshs	y,x,b,a
+;		ldy	BLIT_CURSOR_POS		; store final cursor pos
+;		ldx	#input_buffer
+;		lda	#ASCII_CR
+;		jsr	putchar			; go to start of line
+;		cmpy	BLIT_CURSOR_POS		; were we already at column 0?
+;		beq	.2			; yes, just write 0 and finish
+;		lda	#BLIT_CMD_INCREASE_CURSOR_POS
+;.1		ldb	BLIT_TILE_CHAR
+;		sta	BLIT_CR
+;		stb	,x+
+;		cmpy	BLIT_CURSOR_POS
+;		bne	.1
+;.2		clr	,x			; place 0 at end of string
+;		puls	y,x,b,a
+;		rts
+
+clear_screen:	pshs	a
 		lda	#BLIT_CMD_RESET_CURSOR		; reset curs pos
 		sta	BLIT_CR
 		lda	#' '
@@ -74,8 +90,7 @@ clear_screen:
 		puls	a
 		rts
 
-add_bottom_row:
-		pshs	y,x,b,a
+add_bottom_row:	pshs	y,x,b,a
 		ldd	BLIT_CURSOR_POS
 		pshs	b,a			; save old cursor pos
 		ldx	#$0000
@@ -121,8 +136,7 @@ add_bottom_row:
 		puls	y,x,b,a
 		rts
 
-add_top_row:
-		pshs	y,x,b,a
+add_top_row:	pshs	y,x,b,a
 
 		ldx	BLIT_CURSOR_POS		; x now points to last position of screen
 		tfr	x,d

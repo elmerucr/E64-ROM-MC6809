@@ -1,6 +1,6 @@
 		include	"definitions.i"
 
-		global	input_loop
+		global	mon_process
 		global	prompt
 
 
@@ -10,18 +10,19 @@ command_index:	ds	1
 temp_address:	ds	2
 start_address:	ds	2
 end_address:	ds	2
+mem_done_flag:	ds	1
 
 
 		section	TEXT
 
-input_loop:	pshs	y,x,b,a
+mon_process:	pshs	y,x,b,a
 		ldx	#input_buffer
-input_loop2:	lda	,x+
+mon_process2:	lda	,x+
 		beq	.3
 		cmpa	#'.'
-		beq	input_loop2		; skip dots
+		beq	mon_process2		; skip dots
 		cmpa	#' '
-		beq	input_loop2		; skip spaces
+		beq	mon_process2		; skip spaces
 		ldb	#cmd_names_end-cmd_names-1
 		ldy	#cmd_names
 .1		cmpa	b,y			; did we find match with command?
@@ -30,11 +31,12 @@ input_loop2:	lda	,x+
 		aslb
 		ldy	#function_table
 		jsr	[b,y]
-		bra	.3
+		bra	.4
 .2		decb				; no match, value in table
 		bpl	.1			; check while b>=0
 		jsr	syntax_error		; command doesn't exist
-.3		puls	y,x,b,a			; end
+.3		jsr	prompt
+.4		puls	y,x,b,a			; end
 		rts
 
 syntax_error:	pshs	b
@@ -85,7 +87,7 @@ cmd_mid:	jsr	consume_one_space
 		jsr	consume_one_space
 		bne	.1			; no space, end address = start address
 		jsr	get_hex_word		; space, so check for another word
-		bne	.3			; word is bad, end it
+		bne	.1			; word is bad, end it
 		ldd	temp_address
 		bra	.2
 .1		ldd	start_address
@@ -93,23 +95,28 @@ cmd_mid:	jsr	consume_one_space
 		jsr	display_mem
 		rts
 .3		jsr	syntax_error
+		jsr	prompt
 		rts
 
 cmd_colon:
-cmd_a:		rts
+cmd_a:		jsr	prompt
+		rts
 
 cmd_g:		pshs	x
 		ldx	#gogo
 		jsr	puts
 		puls	x
+		jsr	prompt
 		rts
 
 cmd_c:		jsr	clear_screen
+		jsr	prompt
 		rts
 
 		; data in start_address and end_address
 		;
 display_mem:	pshs	x,b,a
+		clr	mem_done_flag
 		ldx	start_address
 
 .1		jsr	prompt
@@ -120,31 +127,39 @@ display_mem:	pshs	x,b,a
 		ldb	#$08
 .2		lda	#' '
 		jsr	putchar
-		lda	,x+
+		cmpx	end_address
+		bne	.3
+		inc	mem_done_flag	; we've reached the final address
+.3		lda	,x+
 		jsr	pr_byte
 		decb
 		bne	.2
 
 		lda	#' '
 		jsr	putchar
-
-		ldd	#$f226		; darker backgroundd color
-		std	BLIT_D_00+6
+		lda	#'|'
+		jsr	putchar
 
 		leax	-8,x
 		ldb	#$08
-.3		lda	,x+
+.4		lda	,x+
 		jsr	putsymbol
 		lda	#ASCII_CURSOR_RIGHT
 		jsr	putchar
 		decb
-		bne	.3
+		bne	.4
 
-		ldd	#$0000		; turn off background color
-		std	BLIT_D_00+6
-
-		cmpx	end_address
-		bls	.1
+		lda	#'|'
+		jsr	putchar
+		lda	mem_done_flag
+		beq	.1
+		lda	#ASCII_CR
+		jsr	putchar
+		ldb	#$07
+		lda	#ASCII_CURSOR_RIGHT
+.5		jsr	putchar
+		decb
+		bne	.5
 		puls	x,b,a
 		rts
 
