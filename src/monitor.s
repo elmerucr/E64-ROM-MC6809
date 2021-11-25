@@ -98,7 +98,40 @@ cmd_mid:	jsr	consume_one_space
 		jsr	prompt
 		rts
 
-cmd_colon:
+cmd_colon:	pshs	y,b,a
+		jsr	get_hex_word
+		bne	cc_error
+		ldy	temp_address
+		sty	start_address
+		sty	end_address
+		ldb	#$08
+.1		jsr	consume_one_space
+		bne	cc_error
+		jsr	get_hex_byte
+		bne	cc_error
+		lda	temp_address+1
+		sta	,y+
+		decb
+		bne	.1
+		lda	#ASCII_CURSOR_UP
+		jsr	putchar
+		jsr	display_mem	; successful end
+		jsr	prompt
+		lda	#':'
+		jsr	putchar
+		pshs	x
+		tfr	y,x
+		jsr	pr_word_in_x
+		puls	x
+		lda	#' '
+		jsr	putchar
+		puls	y,b,a
+		rts
+cc_error:	jsr	syntax_error
+		jsr	prompt
+		puls	y,b,a
+		rts
+
 cmd_a:		jsr	prompt
 		rts
 
@@ -113,8 +146,7 @@ cmd_c:		jsr	clear_screen
 		jsr	prompt
 		rts
 
-		; data in start_address and end_address
-		;
+		; data must be in start_address and end_address
 display_mem:	pshs	x,b,a
 		clr	mem_done_flag
 		ldx	start_address
@@ -172,9 +204,11 @@ consume_one_space:
 .1		lda	#$01
 		rts
 
-get_hex_byte:	ldb	#$08		; digit and shift counter
+get_hex_byte:	pshs	b
+		ldb	#$08		; digit and shift counter
 		bra	ghb0
-get_hex_word:	ldb	#$10
+get_hex_word:	pshs	b
+		ldb	#$10
 ghb0:		clr	temp_address
 		clr	temp_address+1
 next_digit:	lda	,x+		; fetch char
@@ -197,8 +231,10 @@ hexshift:	asla
 		bne	hexshift	; no, loop
 		bra	next_digit
 ghb_end_error:	lda	#$01		; error
+		puls	b
 		rts
 ghb_end:	clra			; return 0 on success
+		puls	b
 		rts
 
 
