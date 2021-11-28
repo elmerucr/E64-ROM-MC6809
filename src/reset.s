@@ -5,14 +5,11 @@
 
 		section	TEXT
 
-rom_version:	db	'E64-ROM v0.3 20211125',0
+rom_version:	db	'E64-ROM v0.3 20211128',0
 
 exc_reset:	; set stackpointers
-		lds	#$d000		; this write to sp enables nmi
-		ldu	#$c000		; initial value might be changed by software
-
-		lda	#$c0
-		tfr	a,dp
+		lds	#$0800		; this write to sp enables nmi
+		ldu	#$d000		; initial value might be changed by software
 
 		jsr	init_vectors
 
@@ -46,6 +43,7 @@ exc_reset:	; set stackpointers
 		sta	CIA_KRS		; 5 * 10ms = 50ms rep speed
 
 		andcc	#%10101111	; enable firq/irq
+
 		jsr	se_init		; init screen editor
 		ldx	#sysinfo
 		jsr	puts
