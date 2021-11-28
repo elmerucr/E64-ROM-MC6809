@@ -34,7 +34,6 @@ se_loop:	lda	CIA_AC				; do we have a char?
 		bne	.1
 		jsr	copy_line_to_textbuffer		; yes, copy text in buffer
 		jsr	mon_process			; execute in monitor
-		;jsr	prompt
 		bra	.2
 .1		jsr	putchar
 .2		lda	#BLIT_CMD_ACTIVATE_CURSOR
@@ -58,23 +57,6 @@ copy_line_to_textbuffer:
 		sty	BLIT_CURSOR_POS
 		puls	y,x,b,a
 		rts
-
-;		pshs	y,x,b,a
-;		ldy	BLIT_CURSOR_POS		; store final cursor pos
-;		ldx	#input_buffer
-;		lda	#ASCII_CR
-;		jsr	putchar			; go to start of line
-;		cmpy	BLIT_CURSOR_POS		; were we already at column 0?
-;		beq	.2			; yes, just write 0 and finish
-;		lda	#BLIT_CMD_INCREASE_CURSOR_POS
-;.1		ldb	BLIT_TILE_CHAR
-;		sta	BLIT_CR
-;		stb	,x+
-;		cmpy	BLIT_CURSOR_POS
-;		bne	.1
-;.2		clr	,x			; place 0 at end of string
-;		puls	y,x,b,a
-;		rts
 
 clear_screen:	pshs	a
 		lda	#BLIT_CMD_RESET_CURSOR		; reset curs pos

@@ -1,5 +1,5 @@
 _ROM_START	= 0xe000;
-_RAM_START	= 0x0300;
+_RAM_START	= 0xc300;
 
 SECTIONS {
 	. = _ROM_START;

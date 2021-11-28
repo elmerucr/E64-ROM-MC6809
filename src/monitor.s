@@ -104,9 +104,8 @@ cmd_colon:	pshs	y,b,a
 		ldy	temp_address
 		sty	start_address
 		sty	end_address
-		ldb	#$08
-.1		jsr	consume_one_space
-		bne	cc_error
+		ldb	#$08		; prepare for 8 fetches of byte
+.1		leax	1,x		; consume next char
 		jsr	get_hex_byte
 		bne	cc_error
 		lda	temp_address+1
@@ -135,10 +134,12 @@ cc_error:	jsr	syntax_error
 cmd_a:		jsr	prompt
 		rts
 
-cmd_g:		pshs	x
-		ldx	#gogo
-		jsr	puts
-		puls	x
+cmd_g:		jsr	consume_one_space
+		bne	.1
+		jsr	get_hex_word
+		bne	.1
+		jmp	[temp_address]	; jump to never never land :-)
+.1		jsr	syntax_error	; error
 		jsr	prompt
 		rts
 

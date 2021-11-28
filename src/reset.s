@@ -8,8 +8,11 @@
 rom_version:	db	'E64-ROM v0.3 20211125',0
 
 exc_reset:	; set stackpointers
-		lds	#$1000		; this write to sp enables nmi
-		ldu	#$0800
+		lds	#$d000		; this write to sp enables nmi
+		ldu	#$c000		; initial value might be changed by software
+
+		lda	#$c0
+		tfr	a,dp
 
 		jsr	init_vectors
 
