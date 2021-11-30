@@ -36,22 +36,27 @@ BLIT_HBC	equ	BLIT+$a		; 16 bit
 ;
 BLIT_PAGE	equ	BLIT+$e		; 16 bit
 
-; blit specific to active blit (register 1)
-BLIT_NO_OF_TILES	equ	BLIT+$10	; 16 bit read only
-BLIT_CURSOR_POS		equ	BLIT+$12	; 16 bit pointer
-BLIT_BLINK_INTERVAL	equ	BLIT+$14	; read/write
-BLIT_PITCH		equ	BLIT+$15	; read only
-BLIT_TILE_CHAR		equ	BLIT+$16	; read/write
-BLIT_TILE_FG_COLOR	equ	BLIT+$18	; read/write
-BLIT_TILE_BG_COLOR	equ	BLIT+$1a	; read/write
+; blit specific to active blit (which is in register 1)
+BLIT_FLAGS_0		equ	BLIT+$10
+BLIT_FLAGS_1		equ	BLIT+$11
+BLIT_SIZE_LOG2		equ	BLIT+$12
+BLIT_UNUSED		equ	BLIT+$13
+BLIT_FOREGROUND_COLOR	equ	BLIT+$14
+BLIT_BACKGROUND_COLOR	equ	BLIT+$16
+
+BLIT_NO_OF_TILES	equ	BLIT+$20	; 16 bit read only
+BLIT_CURSOR_POS		equ	BLIT+$22	; 16 bit pointer
+BLIT_BLINK_INTERVAL	equ	BLIT+$24	; read/write
+BLIT_PITCH		equ	BLIT+$25	; read only
+BLIT_TILE_CHAR		equ	BLIT+$26	; read/write
+BLIT_TILE_FG_COLOR	equ	BLIT+$28	; read/write
+BLIT_TILE_BG_COLOR	equ	BLIT+$2a	; read/write
 
 BLIT_CMD_SWAP_BUFFERS		equ	%00000001
 BLIT_CMD_CLEAR_FRAMEBUFFER	equ	%00000010
 BLIT_CMD_DRAW_BORDER		equ	%00000100
 BLIT_CMD_DRAW_BLIT		equ	%00001000
 
-BLIT_CMD_RESET_CURSOR		equ	%10000000
-BLIT_CMD_PUT_SYMBOL_AT_CURSOR	equ	%10000001
 BLIT_CMD_DECREASE_CURSOR_POS	equ	%11000000
 BLIT_CMD_INCREASE_CURSOR_POS	equ	%11000001
 BLIT_CMD_ACTIVATE_CURSOR	equ	%11100000

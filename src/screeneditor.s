@@ -59,18 +59,16 @@ copy_line_to_textbuffer:
 		puls	y,x,b,a
 		rts
 
-clear_screen:	pshs	a
-		lda	#BLIT_CMD_RESET_CURSOR		; reset curs pos
-		sta	BLIT_CR
-		lda	#' '
-		sta	BLIT_DATA
-.1		lda	#BLIT_CMD_PUT_SYMBOL_AT_CURSOR
-		sta	BLIT_CR
+clear_screen:	pshs	b,a
+		ldd	#$0000
+		std	BLIT_CURSOR_POS
+.1		lda	#' '
+		jsr	putsymbol
 		lda	#BLIT_CMD_INCREASE_CURSOR_POS
 		sta	BLIT_CR
 		lda	BLIT_CR			; check for pos 0 (bit 7)
 		bpl	.1
-		puls	a
+		puls	b,a
 		rts
 
 add_bottom_row:	pshs	y,x,b,a
@@ -99,11 +97,9 @@ add_bottom_row:	pshs	y,x,b,a
 		bne	.1
 
 		sty	BLIT_CURSOR_POS
-		lda	#' '
-		sta	BLIT_DATA
 		ldb	BLIT_PITCH
-.2		lda	#BLIT_CMD_PUT_SYMBOL_AT_CURSOR
-		sta	BLIT_CR
+.2		lda	#' '
+		jsr	putsymbol
 		decb
 		beq	.3
 		lda	#BLIT_CMD_INCREASE_CURSOR_POS
@@ -146,11 +142,9 @@ add_top_row:	pshs	y,x,b,a
 
 		; x now points to last char of first row
 		stx	BLIT_CURSOR_POS
-		lda	#' '
-		sta	BLIT_DATA
-		lda	#BLIT_CMD_PUT_SYMBOL_AT_CURSOR
 		ldb	#BLIT_CMD_DECREASE_CURSOR_POS
-.2		sta	BLIT_CR
+.2		lda	#' '
+		jsr	putsymbol
 		leax	-1,x
 		stb	BLIT_CR
 		cmpx	#-1
@@ -167,10 +161,13 @@ add_top_row:	pshs	y,x,b,a
 
 		; putsymbol - expects code to be in ac
 		; doesn't change registers
-putsymbol:	sta	BLIT_DATA
-		lda	#BLIT_CMD_PUT_SYMBOL_AT_CURSOR
-		sta	BLIT_CR
-		lda	BLIT_DATA	; restore ac
+putsymbol:	pshs	b,a
+		sta	BLIT_TILE_CHAR
+		ldd	BLIT_FOREGROUND_COLOR
+		std	BLIT_TILE_FG_COLOR
+		ldd	BLIT_BACKGROUND_COLOR
+		std	BLIT_TILE_BG_COLOR
+		puls	b,a
 		rts
 
 		; putchar - expects ascii code to be in ac

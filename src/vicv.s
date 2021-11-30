@@ -3,7 +3,7 @@
 		global	vicv_clear_kernel_displ_list
 		global	vicv_init_displ_list
 		global	vicv_set_bordersize_and_colors
-		global	vicv_set_blitdescriptor_0
+		global	vicv_set_blit_0
 		global	vicv_irq_handler
 
 		section	TEXT
@@ -41,22 +41,20 @@ vicv_set_bordersize_and_colors:
 		puls	b,a
 		rts
 
-vicv_set_blitdescriptor_0:
+vicv_set_blit_0:
 		; Set up blitdescriptor 0 (main text screen)
-		pshs	x,b,a
+		pshs	b,a
+		clr	BLIT_NO		; blit 0
 		lda	#%10001010
-		ldx	#BLIT_D_00
-		sta	,x
-		clra			; not expanded, not mirrored
-		sta	1,x
+		sta	BLIT_FLAGS_0
+		clr	BLIT_FLAGS_1	; not expanded, not mirrored
 		lda	#$56		; size 64x32
-		sta	2,x
+		sta	BLIT_SIZE_LOG2
 		ldd	c64_lightblue
-		std	4,x		; text color
-		clra
-		clr	6,x
-		clr	7,x
-		puls	x,b,a
+		std	BLIT_FOREGROUND_COLOR
+		clr	BLIT_BACKGROUND_COLOR
+		clr	BLIT_BACKGROUND_COLOR+1
+		puls	b,a
 		rts
 
 vicv_irq_handler:

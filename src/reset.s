@@ -16,7 +16,7 @@ exc_reset:	; set stackpointers
 		jsr	vicv_clear_kernel_displ_list
 		jsr	vicv_init_displ_list
 		jsr	vicv_set_bordersize_and_colors
-		jsr	vicv_set_blitdescriptor_0
+		jsr	vicv_set_blit_0
 
 		; Set up blit memory inspection
 		ldd	#$0000
@@ -89,5 +89,5 @@ init_vectors:	pshs	x
 
 		section	RODATA
 
-sysinfo:	db	ASCII_LF, 'E64 Computer System  (C)2021 elmerucr', ASCII_LF
+sysinfo:	db	'E64 Computer System  (C)2021 elmerucr', ASCII_LF
 		db	ASCII_LF, 'Motorola 6809 cpu  64k/16mb ram system', ASCII_LF, 0

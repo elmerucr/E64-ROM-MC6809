@@ -10,8 +10,7 @@ OBJECTS =	obj/reset.o
 OBJECTS +=	obj/tables.o obj/vectors.o obj/exceptions.o obj/sid.o \
 		obj/screeneditor.o obj/vicv.o obj/monitor.o
 
-# Sometimes there seems be strange behaviour related to the -align option. Now
-# it seems ok. Another way would be to use the -devpac option?
+# Flags
 ASFLAGS = -Fvobj -6809 -quiet
 LDFLAGS = -b rawbin1 -Trom.ld -Mrom.map
 
