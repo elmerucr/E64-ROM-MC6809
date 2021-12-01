@@ -17,33 +17,27 @@ TIMER6_VECTOR_INDIRECT	equ	$011c
 TIMER7_VECTOR_INDIRECT	equ	$011e
 
 ; vicv
-VICV		equ	$d000
+VICV		equ	$0800
 VICV_SR		equ	VICV
-
-VICV_DISPL_LIST	equ	$0200
+VICV_DISPL_LIST	equ	$0200		; in RAM
 
 ; blit general
-BLIT		equ	$d100
-BLIT_CR		equ	BLIT
-BLIT_NO		equ	BLIT+$1
-BLIT_HBS	equ	BLIT+$2
-BLIT_DATA	equ	BLIT+$3
-BLIT_XPOS	equ	BLIT+$4		; 16 bit
-BLIT_YPOS	equ	BLIT+$6		; 16 bit
-BLIT_CLC	equ	BLIT+$8		; 16 bit
-BLIT_HBC	equ	BLIT+$a		; 16 bit
-;
-;
-BLIT_PAGE	equ	BLIT+$e		; 16 bit
+BLIT		equ	VICV
+BLIT_CR		equ	BLIT+$02
+BLIT_NO		equ	BLIT+$03
+BLIT_XPOS	equ	BLIT+$04	; 16 bit
+BLIT_YPOS	equ	BLIT+$06	; 16 bit
+BLIT_HBS	equ	BLIT+$09
+BLIT_HBC	equ	BLIT+$0a	; 16 bit
+BLIT_CLC	equ	BLIT+$0c	; 16 bit
+BLIT_PAGE	equ	BLIT+$0e	; 16 bit
 
-; blit specific to active blit (which is in register 1)
+; blit specific to active blit (which is in register 0x0803)
 BLIT_FLAGS_0		equ	BLIT+$10
 BLIT_FLAGS_1		equ	BLIT+$11
 BLIT_SIZE_LOG2		equ	BLIT+$12
-BLIT_UNUSED		equ	BLIT+$13
 BLIT_FOREGROUND_COLOR	equ	BLIT+$14
 BLIT_BACKGROUND_COLOR	equ	BLIT+$16
-
 BLIT_NO_OF_TILES	equ	BLIT+$20	; 16 bit read only
 BLIT_CURSOR_POS		equ	BLIT+$22	; 16 bit pointer
 BLIT_BLINK_INTERVAL	equ	BLIT+$24	; read/write
@@ -63,32 +57,14 @@ BLIT_CMD_ACTIVATE_CURSOR	equ	%11100000
 BLIT_CMD_DEACTIVATE_CURSOR	equ	%11100001
 BLIT_CMD_PROCESS_CURSOR_STATE	equ	%11100010
 
-; blit descriptors
-BLIT_D_00	equ	$d800
-BLIT_D_01	equ	$d808
-BLIT_D_02	equ	$d810
-BLIT_D_03	equ	$d818
-BLIT_D_04	equ	$d820
-BLIT_D_05	equ	$d828
-BLIT_D_06	equ	$d830
-BLIT_D_07	equ	$d838
-BLIT_D_08	equ	$d840
-BLIT_D_09	equ	$d848
-BLIT_D_0a	equ	$d850
-BLIT_D_0b	equ	$d858
-BLIT_D_0c	equ	$d860
-BLIT_D_0d	equ	$d868
-BLIT_D_0e	equ	$d870
-BLIT_D_0f	equ	$d878
-
 ; timer
-TIMER		equ	$d300
+TIMER		equ	$0b00
 TIMER_SR	equ	TIMER
 TIMER_CR	equ	TIMER+$01
 TIMER_BPM	equ	TIMER+$02	; 16 bits
 
 ; sid
-SID	equ	$d400
+SID	equ	$0c00
 
 SID0	equ	SID		; sid 0 base
 SID0F	equ	SID0+$00
@@ -113,7 +89,7 @@ SIDM1L	equ	SIDM+$02
 SIDM1R	equ	SIDM+$03
 
 ; cia
-CIA	equ	$d500		; CIA base
+CIA	equ	$0d00		; CIA base
 CIA_SR	equ	CIA		; status register
 CIA_CR	equ	CIA+$01		; control register
 CIA_KRD	equ	CIA+$02		; keyboard repeat delay in 10ms
