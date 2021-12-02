@@ -33,18 +33,18 @@ BLIT_CLC	equ	BLIT+$0c	; 16 bit
 BLIT_PAGE	equ	BLIT+$0e	; 16 bit
 
 ; blit specific to active blit (which is in register 0x0803)
-BLIT_FLAGS_0		equ	BLIT+$10
-BLIT_FLAGS_1		equ	BLIT+$11
-BLIT_SIZE_LOG2		equ	BLIT+$12
-BLIT_FOREGROUND_COLOR	equ	BLIT+$14
-BLIT_BACKGROUND_COLOR	equ	BLIT+$16
-BLIT_NO_OF_TILES	equ	BLIT+$20	; 16 bit read only
-BLIT_CURSOR_POS		equ	BLIT+$22	; 16 bit pointer
-BLIT_BLINK_INTERVAL	equ	BLIT+$24	; read/write
-BLIT_PITCH		equ	BLIT+$25	; read only
-BLIT_TILE_CHAR		equ	BLIT+$26	; read/write
-BLIT_TILE_FG_COLOR	equ	BLIT+$28	; read/write
-BLIT_TILE_BG_COLOR	equ	BLIT+$2a	; read/write
+BLIT_FLAGS_0		equ	BLIT+$20
+BLIT_FLAGS_1		equ	BLIT+$21
+BLIT_SIZE_LOG2		equ	BLIT+$22
+BLIT_FOREGROUND_COLOR	equ	BLIT+$24
+BLIT_BACKGROUND_COLOR	equ	BLIT+$26
+BLIT_NO_OF_TILES	equ	BLIT+$30	; 16 bit read only
+BLIT_CURSOR_POS		equ	BLIT+$32	; 16 bit pointer
+BLIT_BLINK_INTERVAL	equ	BLIT+$34	; read/write
+BLIT_PITCH		equ	BLIT+$35	; read only
+BLIT_TILE_CHAR		equ	BLIT+$36	; read/write
+BLIT_TILE_FG_COLOR	equ	BLIT+$38	; read/write
+BLIT_TILE_BG_COLOR	equ	BLIT+$3a	; read/write
 
 BLIT_CMD_SWAP_BUFFERS		equ	%00000001
 BLIT_CMD_CLEAR_FRAMEBUFFER	equ	%00000010
