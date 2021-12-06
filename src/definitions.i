@@ -27,6 +27,7 @@ BLIT_CR		equ	BLIT+$02
 BLIT_NO		equ	BLIT+$03
 BLIT_XPOS	equ	BLIT+$04	; 16 bit
 BLIT_YPOS	equ	BLIT+$06	; 16 bit
+BLIT_NO_PEEK	equ	BLIT+$08
 BLIT_HBS	equ	BLIT+$09
 BLIT_HBC	equ	BLIT+$0a	; 16 bit
 BLIT_CLC	equ	BLIT+$0c	; 16 bit
