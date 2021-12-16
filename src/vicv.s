@@ -32,7 +32,8 @@ vicv_set_bordersize_and_colors:
 		pshs	b,a
 		lda	#16
 		sta	BLIT_HBS
-		ldd	c64_black
+		;ldd	c64_black
+		ldd	c64_lightblue
 		std	BLIT_HBC
 		ldd	c64_blue
 		std	BLIT_CLC

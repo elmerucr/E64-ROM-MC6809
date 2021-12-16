@@ -16,6 +16,10 @@ TIMER5_VECTOR_INDIRECT	equ	$011a
 TIMER6_VECTOR_INDIRECT	equ	$011c
 TIMER7_VECTOR_INDIRECT	equ	$011e
 
+; disk / file variables at fixed locations
+FILE_START_ADDRESS	equ	$0120
+FILE_END_ADDRESS	equ	$0122
+
 ; vicv
 VICV		equ	$0800
 VICV_SR		equ	VICV

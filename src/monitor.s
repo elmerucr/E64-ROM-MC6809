@@ -2,6 +2,7 @@
 
 		global	mon_process
 		global	prompt
+		global	cmd_r
 
 
 		section	BSS
@@ -11,6 +12,16 @@ temp_address:	ds	2
 start_address:	ds	2
 end_address:	ds	2
 mem_done_flag:	ds	1
+
+reg_pc:		ds	2
+reg_dp:		ds	1
+reg_ac:		ds	1
+reg_br:		ds	1
+reg_xr:		ds	2
+reg_yr:		ds	2
+reg_us:		ds	2
+reg_sp:		ds	2
+reg_cc:		ds	1
 
 
 		section	TEXT
@@ -68,6 +79,7 @@ cmd_names:	db	'm'		; code relies on 'm' being first entry
 		db	'g'
 		db	'c'
 		db	'i'
+		db	'r'
 cmd_names_end:
 
 function_table:	dw	cmd_mid		; m=monitor, i=introspect, d=disassemble?
@@ -77,6 +89,7 @@ function_table:	dw	cmd_mid		; m=monitor, i=introspect, d=disassemble?
 		dw	cmd_g
 		dw	cmd_c
 		dw	cmd_mid
+		dw	cmd_r
 
 cmd_mid:	jsr	consume_one_space
 		bne	.3
@@ -145,6 +158,48 @@ cmd_g:		jsr	consume_one_space
 
 cmd_c:		jsr	clear_screen
 		jsr	prompt
+		rts
+
+		; display registers from the stack
+cmd_r:		pshs	x,a
+		ldx	#r_names
+		jsr	puts
+		ldx	reg_pc
+		jsr	pr_word_in_x
+		lda	#' '
+		jsr	putchar
+		lda	reg_dp
+		jsr	pr_byte
+		lda	#' '
+		jsr	putchar
+		lda	reg_ac
+		jsr	pr_byte
+		lda	#' '
+		jsr	putchar
+		lda	reg_br
+		jsr	pr_byte
+		lda	#' '
+		jsr	putchar
+		ldx	reg_xr
+		jsr	pr_word_in_x
+		lda	#' '
+		jsr	putchar
+		ldx	reg_yr
+		jsr	pr_word_in_x
+		lda	#' '
+		jsr	putchar
+		ldx	reg_us
+		jsr	pr_word_in_x
+		lda	#' '
+		jsr	putchar
+		ldx	reg_sp
+		jsr	pr_word_in_x
+		lda	#' '
+		jsr	putchar
+		lda	reg_cc
+		jsr	pr_byte_binary
+		jsr	prompt
+		puls	x,a
 		rts
 
 		; data must be in start_address and end_address
@@ -241,4 +296,5 @@ ghb_end:	clra			; return 0 on success
 
 		section	RODATA
 
-gogo:	db	ASCII_LF, "go to $xxxx",0
+r_names:	db	ASCII_LF, " pc  dp ac:br  xr   yr   us   sp  efhinzvc",ASCII_LF,0
+gogo:		db	ASCII_LF, "go to $xxxx",0

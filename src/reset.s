@@ -5,7 +5,7 @@
 
 		section	TEXT
 
-rom_version:	db	'E64-ROM v0.3 20211210',0
+rom_version:	db	'E64-ROM v0.3 20211216',0
 
 exc_reset:	; set stackpointers
 		lds	#$0800		; this write to sp enables nmi
@@ -47,7 +47,8 @@ exc_reset:	; set stackpointers
 		jsr	se_init		; init screen editor
 		ldx	#sysinfo
 		jsr	puts
-		jsr	prompt		; print prompt
+		jsr	cmd_r		; HACK!
+		;jsr	prompt		; print prompt
 		jmp	se_loop		; jump to screen editor loop
 
 init_vectors:	pshs	x

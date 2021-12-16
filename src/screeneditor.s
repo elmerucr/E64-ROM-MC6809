@@ -10,6 +10,7 @@
 		global	pr_byte
 		global	pr_word_in_d
 		global	pr_word_in_x
+		global	pr_byte_binary
 
 
 		section	BSS
@@ -291,4 +292,20 @@ pr_word_in_x:	pshs	b,a
 		tfr	x,d
 		jsr	pr_word_in_d
 		puls	b,a
+		rts
+
+pr_byte_binary:	pshs	y,b,a
+		ldy	#$0008
+		tfr	a,b
+prb_start:	bitb	#%10000000
+		beq	prb_zero
+		lda	#'*'
+		jsr	putchar
+		bra	prb_cont
+prb_zero:	lda	#'.'
+		jsr	putchar
+prb_cont:	aslb
+		leay	-1,y
+		bne	prb_start
+		puls	y,b,a
 		rts
