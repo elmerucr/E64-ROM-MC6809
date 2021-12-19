@@ -32,10 +32,9 @@ vicv_set_bordersize_and_colors:
 		pshs	b,a
 		lda	#16
 		sta	BLIT_HBS
-		;ldd	c64_black
-		ldd	c64_lightblue
+		ldd	E64_blue_1
 		std	BLIT_HBC
-		ldd	c64_blue
+		ldd	E64_blue_4
 		std	BLIT_CLC
 		lda	#20
 		sta	BLIT_BLINK_INTERVAL
@@ -51,7 +50,7 @@ vicv_set_blit_0:
 		clr	BLIT_FLAGS_1	; not expanded, not mirrored
 		lda	#$56		; size 64x32
 		sta	BLIT_SIZE_LOG2
-		ldd	c64_lightblue
+		ldd	E64_blue_7
 		std	BLIT_FOREGROUND_COLOR
 		clr	BLIT_BACKGROUND_COLOR
 		clr	BLIT_BACKGROUND_COLOR+1

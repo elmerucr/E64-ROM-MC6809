@@ -17,12 +17,20 @@
 		global	c64_lightblue
 		global	c64_lightgrey
 
+		global	E64_blue_0
+		global	E64_blue_1
+		global	E64_blue_2
+		global	E64_blue_3
+		global	E64_blue_4
+		global	E64_blue_5
+		global	E64_blue_6
+		global	E64_blue_7
+
 		global	music_notes
 
 		section	RODATA
 
-		; C64 colors (VirtualC64)
-		;
+; C64 colors (VirtualC64)
 c64_colors:
 c64_black       dw	$f000
 c64_white       dw	$ffff
@@ -41,10 +49,20 @@ c64_lightgreen  dw	$fbfa
 c64_lightblue   dw	$f67d
 c64_lightgrey   dw	$faaa
 
-		; The following table is based on a SID clock frequency
-		; of 985248Hz (PAL). Calculations were made according to
-		; Codebase64 article:
-		; https://codebase64.org/doku.php?id=base:how_to_calculate_your_own_sid_frequency_table
+; E64 colors
+E64_blue_0	dw	$f001
+E64_blue_1	dw	$f113
+E64_blue_2	dw	$f125
+E64_blue_3	dw	$f227
+E64_blue_4	dw	$f339
+E64_blue_5	dw	$f55b
+E64_blue_6	dw	$f67d
+E64_blue_7	dw	$f78f
+
+; The following table is based on a SID clock frequency
+; of 985248Hz (PAL). Calculations were made according to
+; Codebase64 article:
+; https://codebase64.org/doku.php?id=base:how_to_calculate_your_own_sid_frequency_table
 music_notes:
 		dw	$0116,$0127,$0139,$014b,$015f,$0174
 		dw	$018a,$01a1,$01ba,$01d4,$01f0,$020e	; N_C0_ to N_B0_

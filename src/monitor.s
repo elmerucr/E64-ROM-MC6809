@@ -2,7 +2,7 @@
 
 		global	mon_process
 		global	prompt
-		global	cmd_r
+		global	cmd_s
 
 
 		section	BSS
@@ -80,6 +80,7 @@ cmd_names:	db	'm'		; code relies on 'm' being first entry
 		db	'c'
 		db	'i'
 		db	'r'
+		db	's'
 cmd_names_end:
 
 function_table:	dw	cmd_mid		; m=monitor, i=introspect, d=disassemble?
@@ -90,6 +91,7 @@ function_table:	dw	cmd_mid		; m=monitor, i=introspect, d=disassemble?
 		dw	cmd_c
 		dw	cmd_mid
 		dw	cmd_r
+		dw	cmd_s
 
 cmd_mid:	jsr	consume_one_space
 		bne	.3
@@ -161,7 +163,7 @@ cmd_c:		jsr	clear_screen
 		rts
 
 		; display registers from the stack
-cmd_r:		pshs	x,a
+cmd_s:		pshs	x,a
 		ldx	#r_names
 		jsr	puts
 		ldx	reg_pc
@@ -201,6 +203,13 @@ cmd_r:		pshs	x,a
 		jsr	prompt
 		puls	x,a
 		rts
+
+; run command
+cmd_r:		ldx	#run
+		jsr	puts
+		ldx	[FILE_START_ADDRESS]
+		jsr	pr_word_in_x
+		jmp	,x		; jump to never never land
 
 		; data must be in start_address and end_address
 display_mem:	pshs	x,b,a
@@ -296,5 +305,6 @@ ghb_end:	clra			; return 0 on success
 
 		section	RODATA
 
-r_names:	db	ASCII_LF, " pc  dp ac:br  xr   yr   us   sp  efhinzvc",ASCII_LF,0
-gogo:		db	ASCII_LF, "go to $xxxx",0
+r_names:	db	ASCII_LF, " pc  dp ac:br  xr   yr   us   sp  efhinzvc", ASCII_LF, 0
+gogo:		db	ASCII_LF, "go to $xxxx", 0
+run:		db	ASCII_LF, "run at $", 0

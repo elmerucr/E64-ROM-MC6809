@@ -24,16 +24,52 @@ exc_swi2:
 exc_firq:	rti
 
 exc_irq:	lda	VICV_SR			; check if vicv caused irq
-		beq	.1			; no, go to timer
+		beq	exc_irq_t0		; no, go to timer
 		sta	VICV_SR			; acknowledge irq
 		jmp	[VECTOR_VICV_INDIRECT]
-.1		lda	TIMER_SR
-		beq	.2
-		cmpa	#%00000001
-		bne	.2
-		sta	TIMER_SR
+exc_irq_t0:	lda	TIMER_SR
+		beq	exc_irq_end		; no timer finish exc_irq
+		bita	#%00000001
+		beq	exc_irq_t1
+		anda	#%00000001
+		sta	TIMER_SR		; acknowledge interrupt
 		jmp	[TIMER0_VECTOR_INDIRECT]
-.2		rti
+exc_irq_t1:	bita	#%00000010
+		beq	exc_irq_t2
+		anda	#%00000010
+		sta	TIMER_SR
+		jmp	[TIMER1_VECTOR_INDIRECT]
+exc_irq_t2:	bita	#%00000100
+		beq	exc_irq_t3
+		anda	#%00000100
+		sta	TIMER_SR
+		jmp	[TIMER2_VECTOR_INDIRECT]
+exc_irq_t3:	bita	#%00001000
+		beq	exc_irq_t4
+		anda	#%00001000
+		sta	TIMER_SR
+		jmp	[TIMER3_VECTOR_INDIRECT]
+exc_irq_t4:	bita	#%00010000
+		beq	exc_irq_t5
+		anda	#%00010000
+		sta	TIMER_SR
+		jmp	[TIMER4_VECTOR_INDIRECT]
+exc_irq_t5:	bita	#%00100000
+		beq	exc_irq_t6
+		anda	#%00100000
+		sta	TIMER_SR
+		jmp	[TIMER5_VECTOR_INDIRECT]
+exc_irq_t6:	bita	#%01000000
+		beq	exc_irq_t7
+		anda	#%01000000
+		sta	TIMER_SR
+		jmp	[TIMER6_VECTOR_INDIRECT]
+exc_irq_t7:	bita	#%10000000
+		beq	exc_irq_end
+		anda	#%10000000
+		sta	TIMER_SR
+		jmp	[TIMER7_VECTOR_INDIRECT]
+exc_irq_end:	rti
 
 exc_swi:
 exc_nmi:	rti
@@ -48,53 +84,3 @@ timer4_irq:
 timer5_irq:
 timer6_irq:
 timer7_irq:	rti
-
-;irq_brk_interrupt:
-;	pha
-;	phx
-;	phy
-;
-;	tsx
-;	lda	$0104,x		; load stacked sr
-;	and	#%00010000	; is the break flag set?
-;	beq	.1		; no, branch to vicv check
-;	jmp	(BRK_VECTOR_INDIRECT)
-;
-;.1	lda	VICV_SR
-;	beq	.2		; if not vicv, branch to timer check
-;	sta	VICV_SR		; acknowledge vicv interrupt
-;	jmp	(VICV_VECTOR_INDIRECT)
-;
-;.2	lda	TIMER_SR
-;	beq	interrupt_end
-;	cmp	#%00000001
-;	bne	.3
-;	sta	TIMER_SR	; acknowledge
-;	jmp	(TIMER0_VECTOR_INDIRECT)
-;.3	cmp	#%00000010
-;	bne	.4
-;	sta	TIMER_SR
-;	jmp	(TIMER1_VECTOR_INDIRECT)
-;.4	cmp	#%00000100
-;	bne	.5
-;	sta	TIMER_SR
-;	jmp	(TIMER2_VECTOR_INDIRECT)
-;.5	cmp	#%00001000
-;	bne	.6
-;	sta	TIMER_SR
-;	jmp	(TIMER3_VECTOR_INDIRECT)
-;.6	cmp	#%00010000
-;	bne	.7
-;	sta	TIMER_SR
-;	jmp	(TIMER4_VECTOR_INDIRECT)
-;.7	cmp	#%00100000
-;	bne	.8
-;	sta	TIMER_SR
-;	jmp	(TIMER5_VECTOR_INDIRECT)
-;.8	cmp	#%01000000
-;	bne	.9
-;	sta	TIMER_SR
-;	jmp	(TIMER6_VECTOR_INDIRECT)
-;.9	sta	TIMER_SR			; it must be timer 7
-;	jmp	(TIMER7_VECTOR_INDIRECT)
-;
