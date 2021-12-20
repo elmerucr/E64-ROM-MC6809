@@ -17,14 +17,16 @@
 		global	c64_lightblue
 		global	c64_lightgrey
 
-		global	E64_blue_0
-		global	E64_blue_1
-		global	E64_blue_2
-		global	E64_blue_3
-		global	E64_blue_4
-		global	E64_blue_5
-		global	E64_blue_6
-		global	E64_blue_7
+		global	e64_blue_00
+		global	e64_blue_01
+		global	e64_blue_02
+		global	e64_blue_03
+		global	e64_blue_04
+		global	e64_blue_05
+		global	e64_blue_06
+		global	e64_blue_07
+		global	e64_blue_08
+		global	e64_blue_09
 
 		global	music_notes
 
@@ -50,14 +52,16 @@ c64_lightblue   dw	$f67d
 c64_lightgrey   dw	$faaa
 
 ; E64 colors
-E64_blue_0	dw	$f001
-E64_blue_1	dw	$f113
-E64_blue_2	dw	$f125
-E64_blue_3	dw	$f227
-E64_blue_4	dw	$f339
-E64_blue_5	dw	$f55b
-E64_blue_6	dw	$f67d
-E64_blue_7	dw	$f78f
+e64_blue_00	dw	$f001
+e64_blue_01	dw	$f113
+e64_blue_02	dw	$f226
+e64_blue_03	dw	$f339
+e64_blue_04	dw	$f44c
+e64_blue_05	dw	$f55f
+e64_blue_06	dw	$f77f
+e64_blue_07	dw	$f99f
+e64_blue_08	dw	$fbbf
+e64_blue_09	dw	$fddf
 
 ; The following table is based on a SID clock frequency
 ; of 985248Hz (PAL). Calculations were made according to
