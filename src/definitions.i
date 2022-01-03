@@ -68,10 +68,10 @@ TIMER_SR	equ	TIMER
 TIMER_CR	equ	TIMER+$01
 TIMER_BPM	equ	TIMER+$02	; 16 bits
 
-; sid
-SID	equ	$0c00
+; sound / sid / analog / mixer
+SND	equ	$0c00
 
-SID0	equ	SID		; sid 0 base
+SID0	equ	SND		; sid0 base
 SID0F	equ	SID0+$00
 SID0P	equ	SID0+$02
 SID0VC	equ	SID0+$04
@@ -79,7 +79,7 @@ SID0AD	equ	SID0+$05
 SID0SR	equ	SID0+$06
 SID0V	equ	SID0+$1b
 
-SID1	equ	SID+$20		; sid 1 base
+SID1	equ	SND+$20		; sid1 base
 SID1F	equ	SID1+$00
 SID1P	equ	SID1+$02
 SID1VC	equ	SID1+$04
@@ -87,11 +87,14 @@ SID1AD	equ	SID1+$05
 SID1SR	equ	SID1+$06
 SID1V	equ	SID1+$1b
 
-SIDM	equ	SID+$80		; mixer base
-SIDM0L	equ	SIDM+$00
-SIDM0R	equ	SIDM+$01
-SIDM1L	equ	SIDM+$02
-SIDM1R	equ	SIDM+$03
+ANA0	equ	SND+$04		; analog0 base
+ANA0P	equ	ANA0+$02
+
+SNDM	equ	SND+$80		; mixer base
+SNDM0L	equ	SNDM+$00
+SNDM0R	equ	SNDM+$01
+SNDM1L	equ	SNDM+$02
+SNDM1R	equ	SNDM+$03
 
 ; cia
 CIA	equ	$0d00		; CIA base

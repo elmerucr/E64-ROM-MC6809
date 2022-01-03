@@ -1,13 +1,13 @@
 		include	"definitions.i"
 
-		global	sid_reset
-		global	sid_welcome_sound
+		global	sound_reset
+		global	sound_welcome_sound
 
 		section	TEXT
 
-sid_reset:	pshs	y,x,a	; do sid0 and sid1
+sound_reset:	pshs	y,x,a	; do sid0 and sid1
 		ldx	#$0040
-		ldy	#SID
+		ldy	#SND
 .1		clr	,y+
 		leax	-1,x
 		bne	.1
@@ -16,7 +16,7 @@ sid_reset:	pshs	y,x,a	; do sid0 and sid1
 
 		lda	#$ff	; mixer cleared
 		ldx	#$0008
-		ldy	#SIDM
+		ldy	#SNDM
 .2		sta	,y+
 		leax	-1,x
 		bne	.2
@@ -27,7 +27,7 @@ sid_reset:	pshs	y,x,a	; do sid0 and sid1
 		puls	y,x,a
 		rts
 
-sid_welcome_sound:
+sound_welcome_sound:
 		pshs	b,a
 		ldd	music_notes+N_D3_
 		std	SID0F
@@ -36,9 +36,9 @@ sid_welcome_sound:
 		ldd	#$0f0f
 		std	SID0P
 		lda	#$ff
-		sta	SIDM0L
+		sta	SNDM0L
 		lda	#$10
-		sta	SIDM0R
+		sta	SNDM0R
 		lda	#%01000001
 		sta	SID0VC
 
@@ -49,9 +49,9 @@ sid_welcome_sound:
 		ldd	#$0f0f
 		sta	SID1P
 		lda	#$10
-		sta	SIDM1L
+		sta	SNDM1L
 		lda	#$ff
-		sta	SIDM1R
+		sta	SNDM1R
 		lda	#%01000001
 		sta	SID1VC
 

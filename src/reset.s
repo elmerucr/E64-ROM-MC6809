@@ -5,7 +5,7 @@
 
 		section	TEXT
 
-rom_version:	db	'E64-ROM v0.3 20211221',0
+rom_version:	db	'E64-ROM v0.3 20220103',0
 
 exc_reset:	; set stackpointers
 		lds	#$0800		; this write to sp enables nmi
@@ -28,9 +28,9 @@ exc_reset:	; set stackpointers
 		lda	#%00000001	; turn on timer 0
 		sta	TIMER_CR
 
-		; sids
-		jsr	sid_reset
-		jsr	sid_welcome_sound
+		; sound
+		jsr	sound_reset
+		jsr	sound_welcome_sound
 
 		; cia
 		lda	#CIA_CMD_CLEAR_EVENT_LIST
