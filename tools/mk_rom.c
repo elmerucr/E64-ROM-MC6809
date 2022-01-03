@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 	f = fopen("rom.cpp","w");
 
 	fprintf(f, "/*\n");
-	fprintf(f, " * E64-ROM (rom.cpp) elmerucr (c)2021\n");
+	fprintf(f, " * E64-ROM (rom.cpp) elmerucr (c)2021-2022\n");
 	fprintf(f, " *\n");
 	fprintf(f, " * built-in rom image for E64\n");
 	fprintf(f, " * %s",ctime(&t));
