@@ -71,7 +71,11 @@ exc_irq_t7:	bita	#%10000000
 		jmp	[TIMER7_VECTOR_INDIRECT]
 exc_irq_end:	rti
 
-exc_swi:
+		; FAULTY - NEEDS WORK !!!
+exc_swi:	lda	#BLIT_CMD_ACTIVATE_CURSOR
+		sta	BLIT_CR
+		rti
+
 exc_nmi:	rti
 
 timer0_irq:	lda	#BLIT_CMD_PROCESS_CURSOR_STATE
