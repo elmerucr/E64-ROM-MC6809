@@ -5,7 +5,7 @@
 
 		section	TEXT
 
-rom_version:	db	'E64-ROM v0.3 20220103',0
+rom_version:	db	'E64-ROM v0.3 20220325',0
 
 exc_reset:	; set stackpointers
 		lds	#$0800		; this write to sp enables nmi
@@ -16,7 +16,7 @@ exc_reset:	; set stackpointers
 		jsr	vicv_clear_kernel_displ_list
 		jsr	vicv_init_displ_list
 		jsr	vicv_set_bordersize_and_colors
-		jsr	vicv_set_blit_0
+		jsr	vicv_set_blit_1
 
 		; Set up blit memory inspection
 		ldd	#$0000
@@ -91,4 +91,4 @@ init_vectors:	pshs	x
 		section	RODATA
 
 sysinfo:	db	'E64 Computer System  (C)2022 elmerucr', ASCII_LF
-		db	ASCII_LF, 'Motorola 6809 cpu  64k/16mb ram system', ASCII_LF, 0
+		db	ASCII_LF, 'Motorola 6809 cpu  16mb shared video ram', ASCII_LF, 0

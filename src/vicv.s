@@ -3,7 +3,7 @@
 		global	vicv_clear_kernel_displ_list
 		global	vicv_init_displ_list
 		global	vicv_set_bordersize_and_colors
-		global	vicv_set_blit_0
+		global	vicv_set_blit_1
 		global	vicv_irq_handler
 
 		section	TEXT
@@ -18,14 +18,16 @@ vicv_clear_kernel_displ_list:
 		rts
 
 vicv_init_displ_list:
-		pshs	x
+		pshs	a,b,x
 		ldx	#VICV_DISPL_LIST
-		ldd	#0
+		lda	#$01
 		sta	,x
+		ldd	#0
+		;sta	,x
 		std	4,x
 		ldd	#$10
 		std	6,x
-		puls	x
+		puls	a,b,x
 		rts
 
 vicv_set_bordersize_and_colors:
@@ -36,15 +38,16 @@ vicv_set_bordersize_and_colors:
 		std	BLIT_HBC
 		ldd	e64_blue_03
 		std	BLIT_CLC
-		lda	#20
-		sta	BLIT_BLINK_INTERVAL
 		puls	b,a
 		rts
 
-vicv_set_blit_0:
-		; Set up blitdescriptor 0 (main text screen)
+vicv_set_blit_1:
+		; Set up blitdescriptor 1 (main text screen)
 		pshs	b,a
-		clr	BLIT_NO		; blit 0
+		lda	#$01		; blit 1
+		sta	BLIT_NO
+		lda	#$14		; cursor speed
+		sta	BLIT_BLINK_INTERVAL
 		lda	#%10001010
 		sta	BLIT_FLAGS_0
 		clr	BLIT_FLAGS_1	; not expanded, not mirrored
