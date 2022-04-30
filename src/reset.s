@@ -42,13 +42,15 @@ exc_reset:	; set stackpointers
 		lda	#5
 		sta	CIA_KRS		; 5 * 10ms = 50ms rep speed
 
-		andcc	#%10101111	; enable firq/irq
-
+		; do not yet activate interrupts here, during init and
+		; printing of first messages
 		jsr	se_init		; init screen editor
 		ldx	#sysinfo
 		jsr	puts
 		jsr	cmd_r		; HACK! (show cpu status)
-		;jsr	prompt		; print prompt
+
+		andcc	#%10101111	; enable firq/irq
+
 		jmp	se_loop		; jump to screen editor loop
 
 init_vectors:	pshs	x

@@ -61,19 +61,17 @@ vicv_set_blit_1:
 		rts
 
 vicv_irq_handler:
-		lda	#BLIT_CMD_SWAP_BUFFERS
-		sta	BLIT_CR
 		lda	#BLIT_CMD_CLEAR_FRAMEBUFFER
 		sta	BLIT_CR
 
-		lda	BLIT_NO
+		lda	BLIT_NO		; save current blit number on stack
 		pshs	a
 
 		ldx	#VICV_DISPL_LIST
 		lda	,x++
 .1		sta	BLIT_NO
 		lda	,x++
-		;do nothing with this value, might be used for a spritesheet index
+		;do nothing with these values, might be used for a spritesheet index
 		ldd	,x++
 		std	BLIT_XPOS
 		ldd	,x++
