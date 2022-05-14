@@ -83,7 +83,7 @@ vicv_irq_handler:
 		lda	,x++
 		bne	.1
 
-.2		lda	#BLIT_CMD_DRAW_BORDER
+.2		lda	#BLIT_CMD_DRAW_HOR_BORDER
 		sta	BLIT_CR
 
 		puls	a
