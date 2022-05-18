@@ -18,10 +18,6 @@ exc_reset:	; set stackpointers
 		jsr	vicv_set_bordersize_and_colors
 		jsr	vicv_set_blit_1
 
-		; Set up blit memory inspection
-		ldd	#$0000
-		std	BLIT_PAGE
-
 		; set up a 60Hz timer (3600bpm = $0e10)
 		ldd	#$0e10
 		std	TIMER_BPM

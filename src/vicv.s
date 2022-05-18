@@ -85,6 +85,8 @@ vicv_irq_handler:
 
 .2		lda	#BLIT_CMD_DRAW_HOR_BORDER
 		sta	BLIT_CR
+		lda	#BLIT_CMD_DRAW_VER_BORDER
+		sta	BLIT_CR
 
 		puls	a
 		sta	BLIT_NO
