@@ -32,10 +32,13 @@ vicv_init_displ_list:
 
 vicv_set_bordersize_and_colors:
 		pshs	b,a
+		clra
+		sta	BLIT_VBS
 		lda	#16
 		sta	BLIT_HBS
 		ldd	e64_blue_01
 		std	BLIT_HBC
+		std	BLIT_VBC
 		ldd	e64_blue_03
 		std	BLIT_CLC
 		puls	b,a
