@@ -16,7 +16,7 @@ exc_reset:	; set stackpointers
 		jsr	vicv_clear_kernel_displ_list
 		jsr	vicv_init_displ_list
 		jsr	vicv_set_bordersize_and_colors
-		jsr	vicv_set_blit_1
+		jsr	vicv_set_blit_0
 
 		; set up a 60Hz timer (3600bpm = $0e10)
 		ldd	#$0e10

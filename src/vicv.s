@@ -3,7 +3,7 @@
 		global	vicv_clear_kernel_displ_list
 		global	vicv_init_displ_list
 		global	vicv_set_bordersize_and_colors
-		global	vicv_set_blit_1
+		global	vicv_set_blit_0
 		global	vicv_irq_handler
 
 		section	TEXT
@@ -20,7 +20,7 @@ vicv_clear_kernel_displ_list:
 vicv_init_displ_list:
 		pshs	a,b,x
 		ldx	#VICV_DISPL_LIST
-		lda	#$01
+		clra
 		sta	,x
 		ldd	#0
 		;sta	,x
@@ -44,18 +44,20 @@ vicv_set_bordersize_and_colors:
 		puls	b,a
 		rts
 
-vicv_set_blit_1:
+vicv_set_blit_0:
 		; Set up blitdescriptor 1 (main text screen)
 		pshs	b,a
-		lda	#$01		; blit 1
+		clra			; blit 0
 		sta	BLIT_NO
 		lda	#$14		; cursor speed
 		sta	BLIT_BLINK_INTERVAL
 		lda	#%10001010
 		sta	BLIT_FLAGS_0
 		clr	BLIT_FLAGS_1	; not expanded, not mirrored
-		lda	#$56		; size 64x32
+		lda	#$89		; size 2^9 = 512  x  2^8 = 256
 		sta	BLIT_SIZE_LOG2
+		lda	#$33
+		sta	BLIT_TILE_SIZE_LOG2
 		ldd	e64_blue_07
 		std	BLIT_FOREGROUND_COLOR
 		clr	BLIT_BACKGROUND_COLOR
@@ -83,7 +85,7 @@ vicv_irq_handler:
 		sta	BLIT_CR
 		cmpx	#VICV_DISPL_LIST+$100
 		beq	.2
-		lda	,x++
+		lda	,x++			; load next blit number and check if it's 0 (blit 0 is special can never be used twice)
 		bne	.1
 
 .2		lda	#BLIT_CMD_DRAW_HOR_BORDER

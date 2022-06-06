@@ -21,9 +21,7 @@ input_buffer:	blk	128
 		section	TEXT
 
 se_init:	pshs	a
-		lda	#$01
-		sta	BLIT_NO
-		;clr	BLIT_NO
+		clr	BLIT_NO		; blit 0
 		jsr	clear_screen
 		lda	#BLIT_CMD_ACTIVATE_CURSOR
 		sta	BLIT_CR
