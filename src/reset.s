@@ -88,5 +88,5 @@ init_vectors:	pshs	x
 
 		section	RODATA
 
-sysinfo:	db	'E64 Computer System  (C)2022 elmerucr', ASCII_LF
+sysinfo:	db	'E64 Computer System (C)2022 elmerucr', ASCII_LF
 		db	ASCII_LF, 'Motorola 6809 cpu  16mb shared video ram', ASCII_LF, 0

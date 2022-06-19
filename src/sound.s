@@ -15,7 +15,7 @@ sound_reset:	pshs	y,x,a	; do sid0 and sid1
 		; analog???
 
 		lda	#$ff	; mixer cleared
-		ldx	#$0008
+		ldx	#$0010
 		ldy	#SNDM
 .2		sta	,y+
 		leax	-1,x

@@ -92,18 +92,22 @@ SID1V	equ	SID1+$1b
 ANA0	equ	SND+$04		; analog0 base
 ANA0P	equ	ANA0+$02
 
-SNDM	equ	SND+$80		; mixer base
+SNDM	equ	SND+$100	; mixer base
 SNDM0L	equ	SNDM+$00
 SNDM0R	equ	SNDM+$01
 SNDM1L	equ	SNDM+$02
 SNDM1R	equ	SNDM+$03
-MXAN0L	equ	SIDM+$04
-MXAN0R	equ	SIDM+$05
-MXAN1L	equ	SIDM+$06
-MXAN1R	equ	SIDM+$07
+MXAN0L	equ	SIDM+$08
+MXAN0R	equ	SIDM+$09
+MXAN1L	equ	SIDM+$0a
+MXAN1R	equ	SIDM+$0b
+MXAN2L	equ	SIDM+$0c
+MXAN2R	equ	SIDM+$0d
+MXAN3L	equ	SIDM+$0e
+MXAN3R	equ	SIDM+$0f
 
 ; cia
-CIA	equ	$0d00		; CIA base
+CIA	equ	$0e00		; CIA base
 CIA_SR	equ	CIA		; status register
 CIA_CR	equ	CIA+$01		; control register
 CIA_KRD	equ	CIA+$02		; keyboard repeat delay in 10ms
