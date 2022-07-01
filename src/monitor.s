@@ -29,17 +29,17 @@ reg_cc:		ds	1
 mon_process:	pshs	y,x,b,a
 		ldx	#input_buffer
 mon_process2:	lda	,x+
-		beq	.3
+		beq	.3			; if char = '\0' jump to end
 		cmpa	#'.'
-		beq	mon_process2		; skip dots
+		beq	mon_process2		; skip dot, check next char
 		cmpa	#' '
-		beq	mon_process2		; skip spaces
+		beq	mon_process2		; skip space
 		ldb	#cmd_names_end-cmd_names-1
 		ldy	#cmd_names
-.1		cmpa	b,y			; did we find match with command?
+.1		cmpa	b,y			; did we find a match with command?
 		bne	.2			; no match
 		stb	command_index		; yes, we found a match
-		aslb
+		aslb				; double the size in b (addresses take 2 bytes not 1)
 		ldy	#function_table
 		jsr	[b,y]
 		bra	.4
@@ -79,7 +79,7 @@ cmd_names:	db	'm'		; code relies on 'm' being first entry
 		db	'g'
 		db	'c'
 		db	'i'
-		db	'r'
+		db	'r'		; can be r (registers) or run (run)
 cmd_names_end:
 
 function_table:	dw	cmd_mid		; m=monitor, i=introspect, d=disassemble?
@@ -158,7 +158,7 @@ cmd_g:		jsr	consume_one_space
 .1		jsr	syntax_error	; error
 		jsr	prompt
 		rts
-.2		ldx	#run
+.2		ldx	#go
 		jsr	puts
 		ldx	[FILE_START_ADDRESS]
 		jsr	pr_word_in_x
@@ -168,8 +168,18 @@ cmd_c:		jsr	clear_screen
 		jsr	prompt
 		rts
 
+cmd_r:		lda	,x+		; fetch another char
+		cmpa	#'u'
+		bne	cmd_reg
+		lda	,x+
+		cmpa	#'n'
+		bne	cmd_reg
+		jsr	cmd_run
+		jsr	prompt
+		rts
+
 		; display registers from the stack
-cmd_r:		pshs	x,a
+cmd_reg:	pshs	x,a
 		ldx	#r_names
 		jsr	puts
 		ldx	reg_pc
@@ -208,6 +218,10 @@ cmd_r:		pshs	x,a
 		jsr	pr_byte_binary
 		jsr	prompt
 		puls	x,a
+		rts
+
+cmd_run:	ldx	#run
+		jsr	puts
 		rts
 
 		; data must be in start_address and end_address
@@ -305,4 +319,5 @@ ghb_end:	clra			; return 0 on success
 		section	RODATA
 
 r_names:	db	ASCII_LF, " pc  dp ac:br  xr   yr   us   sp  efhinzvc", ASCII_LF, 0
-run:		db	ASCII_LF, "run from $", 0
+go:		db	ASCII_LF, "go from $", 0
+run:		db	ASCII_LF, "running a game", 0
