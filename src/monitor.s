@@ -154,7 +154,9 @@ cmd_g:		jsr	consume_one_space
 		beq	.2
 		jsr	get_hex_word
 		bne	.1
-		jmp	[temp_address]	; jump to never never land :-)
+		jsr	[temp_address]	; jsr to never never land :-)
+		jsr	prompt
+		rts
 .1		jsr	syntax_error	; error
 		jsr	prompt
 		rts

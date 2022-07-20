@@ -10,16 +10,16 @@
 
 vicv_clear_kernel_displ_list:
 		pshs	x
-		ldx	#VICV_DISPL_LIST
+		ldx	#DISPL_LIST
 .1		clr	,x+
-		cmpx	#VICV_DISPL_LIST+$100
+		cmpx	#DISPL_LIST+$100
 		bne	.1
 		puls	x
 		rts
 
 vicv_init_displ_list:
 		pshs	a,b,x
-		ldx	#VICV_DISPL_LIST
+		ldx	#DISPL_LIST
 		clra
 		sta	,x
 		ldd	#0
@@ -72,7 +72,7 @@ vicv_irq_handler:
 		lda	BLIT_NO		; save current blit number on stack
 		pshs	a
 
-		ldx	#VICV_DISPL_LIST
+		ldx	#DISPL_LIST
 		lda	,x++
 .1		sta	BLIT_NO
 		lda	,x++
@@ -83,7 +83,7 @@ vicv_irq_handler:
 		std	BLIT_YPOS
 		lda	#BLIT_CMD_DRAW_BLIT
 		sta	BLIT_CR
-		cmpx	#VICV_DISPL_LIST+$100
+		cmpx	#DISPL_LIST+$100
 		beq	.2
 		lda	,x++			; load next blit number and check if it's 0 (blit 0 is special can never be used twice)
 		bne	.1
