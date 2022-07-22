@@ -1,14 +1,14 @@
 		include	"definitions.i"
 
-		global	vicv_clear_kernel_displ_list
-		global	vicv_init_displ_list
-		global	vicv_set_bordersize_and_colors
-		global	vicv_set_blit_0
-		global	vicv_irq_handler
+		global	blitter_clear_kernel_displ_list
+		global	blitter_init_displ_list
+		global	blitter_set_bordersize_and_colors
+		global	blitter_set_blit_0
+		global	blitter_irq_handler
 
 		section	TEXT
 
-vicv_clear_kernel_displ_list:
+blitter_clear_kernel_displ_list:
 		pshs	x
 		ldx	#DISPL_LIST
 .1		clr	,x+
@@ -17,7 +17,7 @@ vicv_clear_kernel_displ_list:
 		puls	x
 		rts
 
-vicv_init_displ_list:
+blitter_init_displ_list:
 		pshs	a,b,x
 		ldx	#DISPL_LIST
 		clra
@@ -30,7 +30,7 @@ vicv_init_displ_list:
 		puls	a,b,x
 		rts
 
-vicv_set_bordersize_and_colors:
+blitter_set_bordersize_and_colors:
 		pshs	b,a
 		clra
 		sta	BLIT_VBS
@@ -44,7 +44,7 @@ vicv_set_bordersize_and_colors:
 		puls	b,a
 		rts
 
-vicv_set_blit_0:
+blitter_set_blit_0:
 		; Set up blitdescriptor 1 (main text screen)
 		pshs	b,a
 		clra			; blit 0
@@ -65,7 +65,7 @@ vicv_set_blit_0:
 		puls	b,a
 		rts
 
-vicv_irq_handler:
+blitter_irq_handler:
 		lda	#BLIT_CMD_CLEAR_FRAMEBUFFER
 		sta	BLIT_CR
 

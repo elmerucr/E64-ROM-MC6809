@@ -26,7 +26,7 @@ exc_firq:	rti
 exc_irq:	lda	MACHINE_SR		; check if machine scr refr caused irq
 		beq	exc_irq_t0		; no, go to timer
 		sta	MACHINE_SR		; acknowledge irq
-		jmp	[VECTOR_VICV_INDIRECT]
+		jmp	[VECTOR_BLITTER_INDIRECT]
 exc_irq_t0:	lda	TIMER_SR
 		beq	exc_irq_end		; no timer finish exc_irq
 		bita	#%00000001

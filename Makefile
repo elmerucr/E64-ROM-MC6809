@@ -8,7 +8,7 @@ OBJECTS =	obj/reset.o
 
 # Order of the rest of the objects doesn't matter.
 OBJECTS +=	obj/tables.o obj/vectors.o obj/exceptions.o obj/sound.o \
-		obj/screeneditor.o obj/vicv.o obj/monitor.o
+		obj/screeneditor.o obj/blitter.o obj/monitor.o
 
 # Flags
 ASFLAGS = -Fvobj -6809 -quiet
