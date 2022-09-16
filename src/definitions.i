@@ -29,7 +29,7 @@ DISPL_LIST	equ	$0200		; in RAM
 
 ; blit general
 BLIT		equ	$0800
-BLIT_CR		equ	BLIT+$02
+BLIT_CR		equ	BLIT+$01
 BLIT_NO		equ	BLIT+$03
 BLIT_NO_PEEK	equ	BLIT+$04
 BLIT_HBS	equ	BLIT+$08

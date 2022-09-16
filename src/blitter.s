@@ -45,9 +45,9 @@ blitter_set_bordersize_and_colors:
 		rts
 
 blitter_set_blit_0:
-		; Set up blitdescriptor 1 (main text screen)
+		; Set up blitdescriptor 0 (main text screen)
 		pshs	b,a
-		clra			; blit 0
+		clra			; a = $00: blit 0
 		sta	BLIT_NO
 		lda	#$14		; cursor speed
 		sta	BLIT_BLINK_INTERVAL

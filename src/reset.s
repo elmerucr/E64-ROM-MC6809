@@ -5,11 +5,11 @@
 
 		section	TEXT
 
-rom_version:	db	'E64-ROM v0.3 20220701',0
+rom_version:	db	'E64-ROM v0.3 20220907',0
 
 exc_reset:	; set stackpointers
 		lds	#$0800		; this write to sp enables nmi
-		ldu	#$e000		; initial value might be changed by software
+		ldu	#$c000		; initial value might be changed by software
 
 		jsr	init_vectors
 
