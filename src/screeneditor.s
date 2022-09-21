@@ -21,17 +21,17 @@ input_buffer:	blk	128
 		section	TEXT
 
 se_init:	pshs	a
-		clr	BLIT_NO		; blit 0
+		clr	BLITTER_CONTEXT_0		; blit 0
 		jsr	clear_screen
 		lda	#BLIT_CMD_ACTIVATE_CURSOR
-		sta	BLIT_CR
+		sta	BLITTER_CR
 		puls	a
 		rts
 
 se_loop:	lda	CIA_AC				; do we have a char?
 		beq	se_loop
 		ldb	#BLIT_CMD_DEACTIVATE_CURSOR	; preserve ac
-		stb	BLIT_CR
+		stb	BLITTER_CR
 		cmpa	#ASCII_LF			; enter pressed?
 		bne	.1
 		jsr	copy_line_to_textbuffer		; yes, copy text in buffer
@@ -39,7 +39,7 @@ se_loop:	lda	CIA_AC				; do we have a char?
 		bra	.2
 .1		jsr	putchar
 .2		lda	#BLIT_CMD_ACTIVATE_CURSOR
-		sta	BLIT_CR
+		sta	BLITTER_CR
 		bra	se_loop
 
 copy_line_to_textbuffer:
@@ -51,8 +51,8 @@ copy_line_to_textbuffer:
 		lda	#BLIT_CMD_INCREASE_CURSOR_POS
 .1		ldb	BLIT_TILE_CHAR
 		stb	,x+
-		sta	BLIT_CR			; move cursor to right
-		ldb	BLIT_CR
+		sta	BLITTER_CR			; move cursor to right
+		ldb	BLIT_SR
 		bitb	#%01000000
 		beq	.1
 		clr	,-x			; place 0 at end of string
@@ -66,8 +66,8 @@ clear_screen:	pshs	b,a
 .1		lda	#' '
 		jsr	putsymbol
 		lda	#BLIT_CMD_INCREASE_CURSOR_POS
-		sta	BLIT_CR
-		lda	BLIT_CR			; check for pos 0 (bit 7)
+		sta	BLITTER_CR
+		lda	BLIT_SR			; check for pos 0 (bit 7)
 		bpl	.1
 		puls	b,a
 		rts
@@ -104,13 +104,13 @@ add_bottom_row:	pshs	y,x,b,a
 		decb
 		beq	.3
 		lda	#BLIT_CMD_INCREASE_CURSOR_POS
-		sta	BLIT_CR
+		sta	BLITTER_CR
 		bra	.2
 .3		puls	b,a			; get old cursor pos
 		std	BLIT_CURSOR_POS		; and put it back
 		ldb	BLIT_PITCH
 		lda	#BLIT_CMD_DECREASE_CURSOR_POS
-.4		sta	BLIT_CR
+.4		sta	BLITTER_CR
 		decb
 		bne	.4
 		puls	y,x,b,a
@@ -147,13 +147,13 @@ add_top_row:	pshs	y,x,b,a
 .2		lda	#' '
 		jsr	putsymbol
 		leax	-1,x
-		stb	BLIT_CR
+		stb	BLITTER_CR
 		cmpx	#-1
 		bne	.2
 
 		lda	#BLIT_CMD_INCREASE_CURSOR_POS
 		ldb	BLIT_PITCH
-.3		sta	BLIT_CR
+.3		sta	BLITTER_CR
 		decb
 		bne	.3
 
@@ -177,8 +177,8 @@ putchar:	pshs	b,a
 is_lf		cmpa	#ASCII_LF
 		bne	is_cri
 		ldb	#BLIT_CMD_INCREASE_CURSOR_POS
-.1		stb	BLIT_CR
-		lda	BLIT_CR
+.1		stb	BLITTER_CR
+		lda	BLIT_SR
 		bita	#%01000000	; did we reach column 0?
 		beq	.1
 		bita	#%00100000	; did we reach end of screen?
@@ -188,8 +188,8 @@ is_lf		cmpa	#ASCII_LF
 is_cri		cmpa	#ASCII_CURSOR_RIGHT
 		bne	is_cl
 		lda	#BLIT_CMD_INCREASE_CURSOR_POS
-		sta	BLIT_CR
-		lda	BLIT_CR
+		sta	BLITTER_CR
+		lda	BLIT_SR
 		bita	#%00100000	; did we cross end of screen?
 		lbeq	finish
 		jsr	add_bottom_row
@@ -197,8 +197,8 @@ is_cri		cmpa	#ASCII_CURSOR_RIGHT
 is_cl		cmpa	#ASCII_CURSOR_LEFT
 		bne	is_cd
 		lda	#BLIT_CMD_DECREASE_CURSOR_POS
-		sta	BLIT_CR
-		lda	BLIT_CR
+		sta	BLITTER_CR
+		lda	BLIT_SR
 		bita	#%00100000	; did we cross start of screen?
 		lbeq	finish
 		jsr	add_top_row
@@ -207,8 +207,8 @@ is_cd		cmpa	#ASCII_CURSOR_DOWN
 		bne	is_cu
 		ldb	BLIT_PITCH
 .1		lda	#BLIT_CMD_INCREASE_CURSOR_POS
-		sta	BLIT_CR
-		lda	BLIT_CR
+		sta	BLITTER_CR
+		lda	BLIT_SR
 		bita	#%00100000	; did we cross end of screen?
 		beq	.2
 		jsr	add_bottom_row
@@ -219,8 +219,8 @@ is_cu		cmpa	#ASCII_CURSOR_UP
 		bne	is_bksp
 		ldb	BLIT_PITCH
 .1		lda	#BLIT_CMD_DECREASE_CURSOR_POS
-		sta	BLIT_CR
-		lda	BLIT_CR
+		sta	BLITTER_CR
+		lda	BLIT_SR
 		bita	#%00100000	; did we cross start of screen?
 		beq	.2
 		jsr	add_top_row
@@ -230,8 +230,8 @@ is_cu		cmpa	#ASCII_CURSOR_UP
 is_bksp 	cmpa	#ASCII_BACKSPACE
 		bne	is_cr
 		lda	#BLIT_CMD_DECREASE_CURSOR_POS
-		sta	BLIT_CR
-		lda	BLIT_CR
+		sta	BLITTER_CR
+		lda	BLIT_SR
 		bita	#%00100000	; did we cross start of screen?
 		beq	.1
 		jsr	add_top_row
@@ -241,15 +241,15 @@ is_bksp 	cmpa	#ASCII_BACKSPACE
 is_cr		cmpa	#ASCII_CR
 		bne	is_sym
 		ldb	#BLIT_CMD_DECREASE_CURSOR_POS
-.1		lda	BLIT_CR
+.1		lda	BLIT_SR
 		bita	#%01000000	; are we at column 0?
 		bne	finish		; yes, finished
-		stb	BLIT_CR
+		stb	BLITTER_CR
 		bra	.1
 is_sym		jsr	putsymbol
 		lda	#BLIT_CMD_INCREASE_CURSOR_POS
-		sta	BLIT_CR
-		lda	BLIT_CR
+		sta	BLITTER_CR
+		lda	BLIT_SR
 		bita	#%00100000	; did we cross end of screen?
 		beq	finish
 		jsr	add_bottom_row

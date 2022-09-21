@@ -149,11 +149,13 @@ cmd_a:		jsr	prompt
 
 cmd_g:		jsr	consume_one_space
 		bne	.1
-		lda	BLIT_TILE_CHAR
+		lda	,x
+		;lda	BLIT_TILE_CHAR
 		cmpa	#' '
 		beq	.2
 		jsr	get_hex_word
 		bne	.1
+		; todo fix bug, not starting here
 		jsr	[temp_address]	; jsr to never never land :-)
 		jsr	prompt
 		rts
@@ -164,7 +166,9 @@ cmd_g:		jsr	consume_one_space
 		jsr	puts
 		ldx	[FILE_START_ADDRESS]
 		jsr	pr_word_in_x
-		jmp	,x		; jump to never never land
+		jsr	,x		; jsr to never never land
+		jsr	prompt
+		rts
 
 cmd_c:		jsr	clear_screen
 		jsr	prompt

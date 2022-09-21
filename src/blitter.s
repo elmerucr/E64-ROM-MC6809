@@ -33,14 +33,14 @@ blitter_init_displ_list:
 blitter_set_bordersize_and_colors:
 		pshs	b,a
 		clra
-		sta	BLIT_VBS
+		sta	BLITTER_VBS
 		lda	#16
-		sta	BLIT_HBS
+		sta	BLITTER_HBS
 		ldd	e64_blue_01
-		std	BLIT_HBC
-		std	BLIT_VBC
+		std	BLITTER_HBC
+		std	BLITTER_VBC
 		ldd	e64_blue_03
-		std	BLIT_CLC
+		std	BLITTER_CLC
 		puls	b,a
 		rts
 
@@ -48,7 +48,7 @@ blitter_set_blit_0:
 		; Set up blitdescriptor 0 (main text screen)
 		pshs	b,a
 		clra			; a = $00: blit 0
-		sta	BLIT_NO
+		sta	BLITTER_CONTEXT_0
 		lda	#$14		; cursor speed
 		sta	BLIT_BLINK_INTERVAL
 		lda	#%10001010
@@ -66,15 +66,15 @@ blitter_set_blit_0:
 		rts
 
 blitter_irq_handler:
-		lda	#BLIT_CMD_CLEAR_FRAMEBUFFER
-		sta	BLIT_CR
+		lda	#BLITTER_CMD_CLEAR_FRAMEBUFFER
+		sta	BLITTER_CR
 
-		lda	BLIT_NO		; save current blit number on stack
+		lda	BLITTER_CONTEXT_0		; save current blit number on stack
 		pshs	a
 
 		ldx	#DISPL_LIST
 		lda	,x++
-.1		sta	BLIT_NO
+.1		sta	BLITTER_CONTEXT_0
 		lda	,x++
 		;do nothing with these values, might be used for a spritesheet index
 		ldd	,x++
@@ -82,17 +82,17 @@ blitter_irq_handler:
 		ldd	,x++
 		std	BLIT_YPOS
 		lda	#BLIT_CMD_DRAW_BLIT
-		sta	BLIT_CR
+		sta	BLITTER_CR
 		cmpx	#DISPL_LIST+$100
 		beq	.2
 		lda	,x++			; load next blit number and check if it's 0 (blit 0 is special can never be used twice)
 		bne	.1
 
-.2		lda	#BLIT_CMD_DRAW_HOR_BORDER
-		sta	BLIT_CR
-		lda	#BLIT_CMD_DRAW_VER_BORDER
-		sta	BLIT_CR
+.2		lda	#BLITTER_CMD_DRAW_HOR_BORDER
+		sta	BLITTER_CR
+		lda	#BLITTER_CMD_DRAW_VER_BORDER
+		sta	BLITTER_CR
 
-		puls	a
-		sta	BLIT_NO
+		puls	a			; restore old blit number
+		sta	BLITTER_CONTEXT_0
 		rti
