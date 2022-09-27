@@ -17,13 +17,22 @@ blitter_clear_kernel_displ_list:
 		puls	x
 		rts
 
+; display list entries (8 bytes each):
+; byte    description
+; ===================
+;  00     when 01, add entry to blits, when 00, end of list
+;  01     blit number
+;  02/03  unused
+;  04/05  xpos
+;  06/07  ypos
+
 blitter_init_displ_list:
 		pshs	a,b,x
 		ldx	#DISPL_LIST
 		clra
+		;lda	#$01
 		sta	,x
 		ldd	#0
-		;sta	,x
 		std	4,x
 		ldd	#$10
 		std	6,x
@@ -66,33 +75,37 @@ blitter_set_blit_0:
 		rts
 
 blitter_irq_handler:
+		; save current blit number on stack
+		lda	BLITTER_CONTEXT_0
+		pshs	a
+
+		; clear framebuffer
 		lda	#BLITTER_CMD_CLEAR_FRAMEBUFFER
 		sta	BLITTER_CR
 
-		lda	BLITTER_CONTEXT_0		; save current blit number on stack
-		pshs	a
-
+		; perform blits
 		ldx	#DISPL_LIST
 		lda	,x++
 .1		sta	BLITTER_CONTEXT_0
-		lda	,x++
-		;do nothing with these values, might be used for a spritesheet index
+		lda	,x++			;do nothing with these values, might be used for a spritesheet index / other stuff
 		ldd	,x++
 		std	BLIT_XPOS
 		ldd	,x++
 		std	BLIT_YPOS
 		lda	#BLIT_CMD_DRAW_BLIT
-		sta	BLITTER_CR
+		sta	BLIT_CR
 		cmpx	#DISPL_LIST+$100
 		beq	.2
 		lda	,x++			; load next blit number and check if it's 0 (blit 0 is special can never be used twice)
 		bne	.1
 
+		; draw borders
 .2		lda	#BLITTER_CMD_DRAW_HOR_BORDER
 		sta	BLITTER_CR
 		lda	#BLITTER_CMD_DRAW_VER_BORDER
 		sta	BLITTER_CR
 
-		puls	a			; restore old blit number
+		; restore original blit number in context 0
+		puls	a
 		sta	BLITTER_CONTEXT_0
 		rti

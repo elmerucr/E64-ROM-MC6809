@@ -73,13 +73,13 @@ exc_irq_end:	rti
 
 		; FAULTY - NEEDS WORK !!!
 exc_swi:	lda	#BLIT_CMD_ACTIVATE_CURSOR
-		sta	BLITTER_CR
+		sta	BLIT_CR
 		rti
 
 exc_nmi:	rti
 
 timer0_irq:	lda	#BLIT_CMD_PROCESS_CURSOR_STATE
-		sta	BLITTER_CR
+		sta	BLIT_CR
 		rti
 timer1_irq:
 timer2_irq:
