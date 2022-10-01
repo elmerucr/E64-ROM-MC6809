@@ -90,7 +90,7 @@ blitter_irq_handler:
 
 		; clear framebuffer
 		lda	#BLITTER_CMD_CLEAR_FRAMEBUFFER
-		sta	BLITTER_CR
+		sta	BLITTER_TASK
 
 		; perform blits
 		ldx	#DISPL_LIST
@@ -114,10 +114,7 @@ blitter_irq_handler:
 
 		; draw both borders
 .2		lda	#%00000010|%00000100
-		;lda	#BLITTER_CMD_DRAW_HOR_BORDER
-		;sta	BLITTER_CR
-		;lda	#BLITTER_CMD_DRAW_VER_BORDER
-		sta	BLITTER_CR
+		sta	BLITTER_TASK
 
 		; restore original blit number in context 0
 		puls	a

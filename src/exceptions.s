@@ -23,9 +23,9 @@ exc_swi3:
 exc_swi2:
 exc_firq:	rti
 
-exc_irq:	lda	MACHINE_SR		; check if machine scr refr caused irq
+exc_irq:	lda	BLITTER_SR		; check if blitter scr refr caused irq
 		beq	exc_irq_t0		; no, go to timer
-		sta	MACHINE_SR		; acknowledge irq
+		sta	BLITTER_SR		; acknowledge irq
 		jmp	[VECTOR_BLITTER_INDIRECT]
 exc_irq_t0:	lda	TIMER_SR
 		beq	exc_irq_end		; no timer finish exc_irq
