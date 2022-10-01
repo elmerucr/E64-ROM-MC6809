@@ -3,7 +3,7 @@
 		global	blitter_clear_kernel_displ_list
 		global	blitter_init_displ_list
 		global	blitter_set_bordersize_and_colors
-		global	blitter_set_blit_0
+		global	blitter_init_blit_0
 		global	blitter_irq_handler
 
 		section	TEXT
@@ -20,21 +20,30 @@ blitter_clear_kernel_displ_list:
 ; display list entries (8 bytes each):
 ; byte    description
 ; ===================
-;  00     when 01, add entry to blits, when 00, end of list
+;  00     00 = end of list
+;         01 = blit
+;         ????02 = hor border
+;         ????03 = ver border
+;
 ;  01     blit number
-;  02/03  unused
+;  02/03  flags 0 / flags 1
 ;  04/05  xpos
 ;  06/07  ypos
 
 blitter_init_displ_list:
 		pshs	a,b,x
 		ldx	#DISPL_LIST
-		clra
-		;lda	#$01
+		;clra
+		lda	#$01
 		sta	,x
-		ldd	#0
+		clr	1,x
+		lda	#$8a
+		sta	2,x
+		clr	3,x
+		; it's automatically about blit 0 (2nd entry = already 0)
+		ldd	#0	; xpos = 0
 		std	4,x
-		ldd	#$10
+		ldd	#$10	; ypos = 32
 		std	6,x
 		puls	a,b,x
 		rts
@@ -53,29 +62,29 @@ blitter_set_bordersize_and_colors:
 		puls	b,a
 		rts
 
-blitter_set_blit_0:
+blitter_init_blit_0:
 		; Set up blitdescriptor 0 (main text screen)
 		pshs	b,a
 		clra			; a = $00: blit 0
 		sta	BLITTER_CONTEXT_0
 		lda	#$14		; cursor speed
-		sta	BLIT_BLINK_INTERVAL
-		lda	#%10001010
-		sta	BLIT_FLAGS_0
-		clr	BLIT_FLAGS_1	; not expanded, not mirrored
+		sta	BLIT_CURSOR_BLINK_INTERVAL
+		;lda	#%10001010
+		;sta	BLIT_FLAGS_0
+		;clr	BLIT_FLAGS_1	; not expanded, not mirrored
 		lda	#$89		; size 2^9 = 512  x  2^8 = 256
 		sta	BLIT_SIZE_LOG2
 		lda	#$33
 		sta	BLIT_TILE_SIZE_LOG2
 		ldd	e64_blue_07
-		std	BLIT_FOREGROUND_COLOR
-		clr	BLIT_BACKGROUND_COLOR
-		clr	BLIT_BACKGROUND_COLOR+1
+		std	BLIT_FG_COLOR
+		clr	BLIT_BG_COLOR
+		clr	BLIT_BG_COLOR+1
 		puls	b,a
 		rts
 
 blitter_irq_handler:
-		; save current blit number on stack
+		; save current blit contecxt 0 on stack
 		lda	BLITTER_CONTEXT_0
 		pshs	a
 
@@ -85,9 +94,14 @@ blitter_irq_handler:
 
 		; perform blits
 		ldx	#DISPL_LIST
-		lda	,x++
-.1		sta	BLITTER_CONTEXT_0
-		lda	,x++			;do nothing with these values, might be used for a spritesheet index / other stuff
+.1		lda	,x+
+		beq	.2			; we have reached the end of the list
+		lda	,x+			; get blit_no
+		sta	BLITTER_CONTEXT_0
+		lda	,x+			;do nothing with these values, might be used for a spritesheet index / other stuff
+		sta	BLIT_FLAGS_0
+		lda	,x+
+		sta	BLIT_FLAGS_1
 		ldd	,x++
 		std	BLIT_XPOS
 		ldd	,x++
@@ -96,13 +110,13 @@ blitter_irq_handler:
 		sta	BLIT_CR
 		cmpx	#DISPL_LIST+$100
 		beq	.2
-		lda	,x++			; load next blit number and check if it's 0 (blit 0 is special can never be used twice)
-		bne	.1
+		bra	.1
 
-		; draw borders
-.2		lda	#BLITTER_CMD_DRAW_HOR_BORDER
-		sta	BLITTER_CR
-		lda	#BLITTER_CMD_DRAW_VER_BORDER
+		; draw both borders
+.2		lda	#%00000010|%00000100
+		;lda	#BLITTER_CMD_DRAW_HOR_BORDER
+		;sta	BLITTER_CR
+		;lda	#BLITTER_CMD_DRAW_VER_BORDER
 		sta	BLITTER_CR
 
 		; restore original blit number in context 0

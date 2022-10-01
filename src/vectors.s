@@ -1,14 +1,18 @@
 		include	"definitions.i"
 
-		section	VECTORS
+		section	VECTORS_GENERAL
 
-.0		jmp	[VECTOR_ILLOP_INDIRECT]
-.1		jmp	[VECTOR_SWI3_INDIRECT]
-.2		jmp	[VECTOR_SWI2_INDIRECT]
-.3		jmp	[VECTOR_FIRQ_INDIRECT]
-.4		jmp	[VECTOR_IRQ_INDIRECT]
-.5		jmp	[VECTOR_SWI_INDIRECT]
-.6		jmp	[VECTOR_NMI_INDIRECT]
+.0		jmp	[VECTOR_ILLOP_INDIRECT]		; $ff00 (instr is 4 bytes)
+.1		jmp	[VECTOR_SWI3_INDIRECT]		; $ff04
+.2		jmp	[VECTOR_SWI2_INDIRECT]		; $ff08
+.3		jmp	[VECTOR_FIRQ_INDIRECT]		; $ff0c
+.4		jmp	[VECTOR_IRQ_INDIRECT]		; $ff10
+.5		jmp	[VECTOR_SWI_INDIRECT]		; $ff14
+.6		jmp	[VECTOR_NMI_INDIRECT]		; $ff18
+
+		dw	music_notes			; $ff1c
+
+		section	VECTORS_SYSTEM
 
 		dw	.0
 		dw	.1

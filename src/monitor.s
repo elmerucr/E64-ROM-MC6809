@@ -80,6 +80,7 @@ cmd_names:	db	'm'		; code relies on 'm' being first entry
 		db	'c'
 		db	'i'
 		db	'r'		; can be r (registers) or run (run)
+		db	'v'
 cmd_names_end:
 
 function_table:	dw	cmd_mid		; m=monitor, i=introspect, d=disassemble?
@@ -90,6 +91,7 @@ function_table:	dw	cmd_mid		; m=monitor, i=introspect, d=disassemble?
 		dw	cmd_c
 		dw	cmd_mid
 		dw	cmd_r
+		dw	cmd_v
 
 cmd_mid:	jsr	consume_one_space
 		bne	.3
@@ -150,7 +152,7 @@ cmd_a:		jsr	prompt
 cmd_g:		jsr	consume_one_space
 		bne	.1
 		lda	,x
-		;lda	BLIT_TILE_CHAR
+		;lda	BLIT_CURSOR_CHAR
 		cmpa	#' '
 		beq	.2
 		jsr	get_hex_word
@@ -228,6 +230,13 @@ cmd_reg:	pshs	x,a
 
 cmd_run:	ldx	#run
 		jsr	puts
+		rts
+
+cmd_v:		lda	#ASCII_LF
+		jsr	putchar
+		ldx	#rom_version
+		jsr	puts
+		jsr	prompt
 		rts
 
 		; data must be in start_address and end_address

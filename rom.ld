@@ -24,7 +24,11 @@ SECTIONS {
 		_BSS_END = .;
 	}
 
-	VECTORS 0xffd4 : AT(0xffd4) {
-		*(VECTORS);
+	VECTORS_GENERAL 0xff00 : AT(0xff00) {
+		*(VECTORS_GENERAL);
+	}
+
+	VECTORS_SYSTEM 0xfff0 : AT(0xfff0) {
+		*(VECTORS_SYSTEM);
 	}
 }

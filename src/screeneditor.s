@@ -49,7 +49,7 @@ copy_line_to_textbuffer:
 		lda	#ASCII_CR
 		jsr	putchar
 		lda	#BLIT_CMD_INCREASE_CURSOR_POS
-.1		ldb	BLIT_TILE_CHAR
+.1		ldb	BLIT_CURSOR_CHAR
 		stb	,x+
 		sta	BLIT_CR			; move cursor to right
 		ldb	BLIT_SR
@@ -81,17 +81,17 @@ add_bottom_row:	pshs	y,x,b,a
 		abx				; x points to second row
 
 .1		stx	BLIT_CURSOR_POS
-		lda	BLIT_TILE_CHAR
+		lda	BLIT_CURSOR_CHAR
 		sty	BLIT_CURSOR_POS
-		sta	BLIT_TILE_CHAR
+		sta	BLIT_CURSOR_CHAR
 		stx	BLIT_CURSOR_POS
-		ldd	BLIT_TILE_FG_COLOR
+		ldd	BLIT_CURSOR_FG_COLOR
 		sty	BLIT_CURSOR_POS
-		std	BLIT_TILE_FG_COLOR
+		std	BLIT_CURSOR_FG_COLOR
 		stx	BLIT_CURSOR_POS
-		ldd	BLIT_TILE_BG_COLOR
+		ldd	BLIT_CURSOR_BG_COLOR
 		sty	BLIT_CURSOR_POS
-		std	BLIT_TILE_BG_COLOR
+		std	BLIT_CURSOR_BG_COLOR
 		leax	1,x			; increase both pointers
 		leay	1,y
 		cmpx	BLIT_NO_OF_TILES	; did we reach the last char?
@@ -125,17 +125,17 @@ add_top_row:	pshs	y,x,b,a
 		tfr	d,y			; y now points to one row up
 
 .1		sty	BLIT_CURSOR_POS
-		lda	BLIT_TILE_CHAR
+		lda	BLIT_CURSOR_CHAR
 		stx	BLIT_CURSOR_POS
-		sta	BLIT_TILE_CHAR
+		sta	BLIT_CURSOR_CHAR
 		sty	BLIT_CURSOR_POS
-		ldd	BLIT_TILE_FG_COLOR
+		ldd	BLIT_CURSOR_FG_COLOR
 		stx	BLIT_CURSOR_POS
-		std	BLIT_TILE_FG_COLOR
+		std	BLIT_CURSOR_FG_COLOR
 		sty	BLIT_CURSOR_POS
-		ldd	BLIT_TILE_BG_COLOR
+		ldd	BLIT_CURSOR_BG_COLOR
 		stx	BLIT_CURSOR_POS
-		std	BLIT_TILE_BG_COLOR
+		std	BLIT_CURSOR_BG_COLOR
 		leax	-1,x
 		leay	-1,y
 		cmpy	#-1
@@ -163,11 +163,11 @@ add_top_row:	pshs	y,x,b,a
 		; putsymbol - expects code to be in ac
 		; doesn't change registers
 putsymbol:	pshs	b,a
-		sta	BLIT_TILE_CHAR
-		ldd	BLIT_FOREGROUND_COLOR
-		std	BLIT_TILE_FG_COLOR
-		ldd	BLIT_BACKGROUND_COLOR
-		std	BLIT_TILE_BG_COLOR
+		sta	BLIT_CURSOR_CHAR
+		ldd	BLIT_FG_COLOR
+		std	BLIT_CURSOR_FG_COLOR
+		ldd	BLIT_BG_COLOR
+		std	BLIT_CURSOR_BG_COLOR
 		puls	b,a
 		rts
 
